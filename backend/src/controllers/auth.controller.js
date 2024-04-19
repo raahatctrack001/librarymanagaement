@@ -3,6 +3,47 @@ import apiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiResponse from "../utils/apiResponse.js";
 
+
+const generateAccessAndRefreshToken = async (userId)=>{
+    try {
+        const currentUser = await User.findById(userId);
+        
+
+        const accessToken = await currentUser.generateAccessToken();
+        const refreshToken =  await currentUser.generateRefreshToken();
+    
+        currentUser.refreshToken = refreshToken;
+        currentUser
+            .save()
+            .then(()=>{
+                console.log('tokens generated successfully!')
+            })
+            .catch((error)=>{
+                throw new apiError(500, error.message)
+            })
+        return {accessToken, refreshToken}
+    } catch (error) {
+        throw new apiError(500, error.message)
+    }
+}//wrapping above code inside async handler gives undefined on destructuring
+
+
+/******************** httpOnly: ***************
+true: This option makes the cookie HTTP-only. This means that the cookie cannot be accessed or 
+modified by client-side JavaScript. It is a security measure to prevent cross-site scripting (XSS) attacks, 
+as the cookie is not exposed to the client-side scripts.*/
+
+/********************************* secure: ******************************
+false: This option determines whether the cookie should only be transmitted over secure HTTPS connections.
+When secure is set to true, the cookie is sent only over HTTPS connections. When secure is set to false, the 
+cookie can be sent over both HTTP and HTTPS connections. Setting secure to true helps protect the cookie's 
+data by ensuring it is only sent over secure channels. */
+
+const options = {
+    httpOnly: true,
+    secure: false
+}
+
 export const registerUser = asyncHandler(async (req, res, next)=>{
     const {fullName, username, email, phone, rollNumber, yearOfJoining, branch, password, confirmPassword} = req.body;
     if(
@@ -89,7 +130,60 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
 });
 
 export const logInUser = asyncHandler(async (req, res, next)=>{
+    const { erpu,  password } = req.body
+    let query = {};
+
+    const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/
+
+    if(dseuEmailPattern.test(erpu)){
+        query = {
+            email: erpu,
+        }
+    }
     
+    if(!isNaN(erpu) && erpu.length == 10){
+        query = {
+            phone: erpu,
+        }
+    }
+    
+    if(!isNaN(erpu) && erpu.length == 8){
+        query = {
+            rollNumber: erpu,
+        }
+    }
+
+    if(Object.keys(query).length == 0){
+        query = {
+            username: erpu
+        }
+    }
+    
+    if(!passwordPattern.test(password)){
+        throw new apiError(406, "invalid password")
+    }
+    try {        
+        const getUser = await User.findOne(query);
+        if(!getUser){
+            throw new apiError(404, "User with this credentials doesn't Exist!")
+        }   
+        
+        const currentUser = await User.findById(getUser?._id).select('-password -refreshToken');
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(getUser?._id)
+        console.log('accessToken', accessToken);
+        console.log('refreshToken', refreshToken);
+    
+        return res
+            .status(200)
+            .cookie('acessToken', accessToken, options)
+            .cookie('refreshToken', refreshToken, options)
+            .json(
+                new apiResponse(200, 'User logged In Success!', currentUser)
+            );
+    } catch (error) {
+        next(error)
+    }
 })
 
 export const logOutUser = asyncHandler(async (req, res, next)=>{

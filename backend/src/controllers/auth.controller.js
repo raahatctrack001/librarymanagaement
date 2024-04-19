@@ -2,7 +2,6 @@ import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiResponse from "../utils/apiResponse.js";
-import { create } from "domain";
 
 export const registerUser = asyncHandler(async (req, res, next)=>{
     const {fullName, username, email, phone, rollNumber, yearOfJoining, branch, password, confirmPassword} = req.body;
@@ -26,10 +25,16 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
         throw new apiError(411, 'username should lie between 6 to 25 character')
     }
 
+    const userPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/
     const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;   
-    const isPatternValid = dseuEmailPattern.test(email);
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/
+    
+    if(userPattern.test(username)){
+        throw new apiError(406, "username can't end with @dseu.a")
+    }
 
-    if(!isPatternValid){
+
+    if(!dseuEmailPattern.test(email)){
         throw new apiError(406, "Email pattern doesn't belongs to DSEU Organization")
     }
 
@@ -45,10 +50,7 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
         throw new apiError(406, "password doesn't match!")
     }
 
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/
-    const isPasswordValid = passwordPattern.test(password)
-
-    if(!isPasswordValid){
+    if(!passwordPattern.test(password)){
         throw new apiError(406, "Invalid Password!, password must be 8 character and should contain at least one uppercase, lowercase, digit and a special character")
     }
 

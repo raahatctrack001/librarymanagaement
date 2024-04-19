@@ -34,7 +34,9 @@ app.use(express.static("public"));
 
 // import routers
 import authRouter from "./routes/auth.route.js";
+import bookRouter from "./routes/book.route.js";
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/book', bookRouter)
 
 app.use((err, req, res, next)=>{
     res

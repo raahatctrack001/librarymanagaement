@@ -1,7 +1,7 @@
 import express from 'express'
 import { 
     continueWithGoogle,
-    deleteUser,
+    deleteUserByAdmin,
     logInUser, 
     logOutUser, 
     registerUser, 
@@ -14,7 +14,7 @@ const router = express.Router()
 
 router.route('/register').post(upload.none(),  registerUser)
 router.route('/login').post(upload.none(), logInUser);
-router.route('/delete-user').delete(verifyUser, deleteUser)
+router.route('/delete-user').delete(verifyUser, deleteUserByAdmin)
 router.route('/reset-password').post(verifyUser, resetPassword)
 router.route('/logout').post(verifyUser, logOutUser)
 router.route('/google').post(continueWithGoogle);

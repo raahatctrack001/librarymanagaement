@@ -11,7 +11,7 @@ export const logOutUser = asyncHandler(async (req, res, next)=>{
     
 })
 
-export const deleteUser = asyncHandler(async (req, res, next)=>{
+export const deleteUserByAdmin = asyncHandler(async (req, res, next)=>{
 
 })
 

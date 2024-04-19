@@ -36,9 +36,16 @@ app.use(express.static("public"));
 import authRouter from "./routes/auth.route.js";
 import bookRouter from "./routes/book.route.js";
 import loneRouter from "./routes/issuedBook.route.js";
+import userRouter from "./routes/user.router.js";
+
+
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/book', bookRouter)
 app.use('/api/v1/book-lone', loneRouter)
+app.use('/api/v1/user', userRouter)
+
+
+
 
 app.use((err, req, res, next)=>{
     res

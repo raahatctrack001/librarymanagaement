@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
         },
         profilePhoto: {
             type: String,
+            default: "https://tse3.mm.bing.net/th?id=OIP.Cl56H6WgxJ8npVqyhefTdQHaHa&pid=Api&P=0&h=180"
         },
         bookBank: {
             type: [
@@ -56,12 +57,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             require: true,
         },
-        confirmPassword: {
-            type: String,
-            require: true,
-        },
         refreshToken: {
             type: String,
+            default:""
         }, 
         isAdmin: {
             type: Boolean,

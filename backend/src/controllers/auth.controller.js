@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js"; 
 export const registerUser = asyncHandler(async (req, res, next)=>{
-
+    console.log(req.body)
 });
 
 export const logInUser = asyncHandler(async (req, res, next)=>{

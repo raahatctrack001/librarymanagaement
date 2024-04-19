@@ -8,7 +8,7 @@ import {
     getOverDueLone, 
     reserveBook, 
     returnBook 
-} from '../controllers/issuedBook.controller.js';
+} from '../controllers/reservedBook.controller.js';
 import { verifyUser } from '../middlewares/auth.midleware.js';
 
 const router = express.Router();

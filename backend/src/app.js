@@ -31,6 +31,11 @@ app.use(express.urlencoded(   //to send urlencoded data like slug.includes(+, -)
 app.use(express.static("public")); 
 
 
+
+// import routers
+import authRouter from "./routes/auth.route.js";
+app.use('/api/v1/auth', authRouter);
+
 app.use((err, req, res, next)=>{
     res
     .status(err.statusCode||500)

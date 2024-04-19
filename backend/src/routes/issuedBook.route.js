@@ -9,6 +9,7 @@ import {
     reserveBook, 
     returnBook 
 } from '../controllers/issuedBook.controller.js';
+import { verifyUser } from '../middlewares/auth.midleware.js';
 
 const router = express.Router();
 

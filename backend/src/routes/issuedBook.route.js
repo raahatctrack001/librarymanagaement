@@ -14,7 +14,7 @@ import { verifyUser } from '../middlewares/auth.midleware.js';
 const router = express.Router();
 
 router.route('/reserve-book').post(verifyUser, reserveBook)
-router.route('/return-book').post(verifyUser, returnBook)
+router.route('/return-book/:bookId').post(verifyUser, returnBook)
 router.route('/get-loan-detail/:bookId').post(verifyUser, getLoanDetail)
 router.route('/get-all-loned-book').post(verifyUser,getAllLonedBooks)
 router.route('/get-loned-history/:userId').post(verifyUser, getLoneHistoryOfUser)

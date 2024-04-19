@@ -1,5 +1,5 @@
 import express from 'express'
-import { verifyUser } from '../middlewares/auth.midleware.js';
+import { verifyAdmin, verifyUser } from '../middlewares/auth.midleware.js';
 import { 
     addBook, 
     deleteBook, 
@@ -12,12 +12,12 @@ import {
 
 const router = express.Router();
 
-router.route('/add-book').post(verifyUser, addBook);
-router.route('/get-all-book').get(verifyUser, getAllBooks);
-router.route('/get-book').get(verifyUser, getBook);
-router.route('/update-book').patch(verifyUser, updateBook);
-router.route('/delete-book').delete(verifyUser, deleteBook);
-router.route('/get-available-book').get(verifyUser, getAvailableBooks);
-router.route('/search-book').get(verifyUser, searchBook);
+router.route('/add-book').post(verifyAdmin, addBook);
+router.route('/get-all-book').get(getAllBooks);
+router.route('/get-book').get(getBook);
+router.route('/update-book').patch(verifyAdmin, updateBook);
+router.route('/delete-book').delete(verifyAdmin, deleteBook);
+router.route('/get-available-book').get(getAvailableBooks);
+router.route('/search-book').get(searchBook);
 
 export default router;

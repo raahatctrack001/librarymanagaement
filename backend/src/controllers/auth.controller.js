@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiResponse from "../utils/apiResponse.js";
+import { createReadStream } from "fs";
 
 
 const generateAccessAndRefreshToken = async (userId)=>{
@@ -94,39 +95,42 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
     if(!passwordPattern.test(password)){
         throw new apiError(406, "Invalid Password!, password must be 8 character and should contain at least one uppercase, lowercase, digit and a special character")
     }
-
-    const checkIfExists = await User.findOne({
-        $or: [{email}, {username}, {rollNumber}, {phone}]
-    });
-
-    
-    if(checkIfExists?._id){
-        throw new apiError(409, "user with this credentials already exists!")
+    try {           
+        const checkIfExists = await User.findOne({
+            $or: [{email}, {username}, {rollNumber}, {phone}]
+        });   
+        
+        if(checkIfExists?._id){
+            throw new apiError(409, "user with this credentials already exists!")
+        }
+        
+        const newUser = await User.create({
+            fullName, 
+            username, 
+            email, 
+            phone, 
+            rollNumber, 
+            yearOfJoining, 
+            branch, 
+            password,
+        })
+        
+        if(!newUser){
+            throw new apiError(500, "Failed to save user registration data due to internal server error!")
+        }
+        
+        const createdUser = await User.findById(newUser?._id).select("-password -refreshToken")
+        console.log(createdUser)
+        
+        return res
+            .status(200)
+            .json(
+                new apiResponse(200, "User Registration Success!", createdUser)
+            )
+    } 
+    catch (error) {
+        next(error);
     }
-    
-    const newUser = await User.create({
-        fullName, 
-        username, 
-        email, 
-        phone, 
-        rollNumber, 
-        yearOfJoining, 
-        branch, 
-        password,
-    })
-    
-    if(!newUser){
-        throw new apiError(500, "Failed to save user registration data due to internal server error!")
-    }
-    
-    const createdUser = await User.findById(newUser?._id).select("-password -refreshToken")
-    console.log(createdUser)
-    
-    return res
-        .status(200)
-        .json(
-            new apiResponse(200, "User Registration Success!", createdUser)
-        )
 });
 
 export const logInUser = asyncHandler(async (req, res, next)=>{
@@ -171,12 +175,10 @@ export const logInUser = asyncHandler(async (req, res, next)=>{
         
         const currentUser = await User.findById(getUser?._id).select('-password -refreshToken');
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(getUser?._id)
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
     
         return res
             .status(200)
-            .cookie('acessToken', accessToken, options)
+            .cookie('accessToken', accessToken, options)
             .cookie('refreshToken', refreshToken, options)
             .json(
                 new apiResponse(200, 'User logged In Success!', currentUser)
@@ -187,7 +189,32 @@ export const logInUser = asyncHandler(async (req, res, next)=>{
 })
 
 export const logOutUser = asyncHandler(async (req, res, next)=>{
-    
+   try {
+        const currentUser = await User.findByIdAndUpdate(req.user?._id,
+            {
+                $set:{
+                    refreshToken:1
+                },
+
+            },
+            {
+                new: true,
+            }
+        );
+        if(!currentUser){
+            throw new apiError(401, "Unauthorized access!")
+        }        
+        return res
+            .status(200)
+            .clearCookie('accessToken', options)
+            .clearCookie('refreshToken', options)
+            .json(
+                new apiResponse(200, "user Logged Out!", {})
+            );
+
+   } catch (error) {
+        next(error);
+   }
 })
 
 export const deleteUserByAdmin = asyncHandler(async (req, res, next)=>{

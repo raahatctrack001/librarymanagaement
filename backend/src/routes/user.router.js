@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.route('/update-profile-picture').post(verifyUser, updateProfilePicture)
-router.route('/update-account-details').patch(verifyUser, updateAccountDetails)
-router.route('/get-all-users').post(verifyAdmin, getAllUsers)
-router.route('/get-user/:userId').post(verifyAdmin, getSpecificUser)
-router.route('/delete-user/:userId').post(verifyUser, deleteUser)
+router.route('/update-profile-picture').post(verifyUser, updateProfilePicture);
+router.route('/update-account-details').patch(verifyUser, updateAccountDetails);
+router.route('/get-all-users').post(verifyAdmin, getAllUsers);
+router.route('/get-user/:userId').post(verifyAdmin, getSpecificUser);
+router.route('/delete-user/:userId').post(verifyUser, deleteUser);
 
 export default router;

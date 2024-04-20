@@ -269,18 +269,13 @@ export const resetPassword = asyncHandler(async (req, res, next)=>{
     if(email != currentUser?.email && phone != currentUser?.phone && rollNumber != currentUser?.rollNumber){
         throw new apiError(401, "You are not an authorised person to reset password, as credentials doesn't match with our database")
     }
-   try {    
-    const hashedPassword = bcryptjs.hashSync(newPassword);
-    const updatedUser = await User.findByIdAndUpdate(currentUser?._id, 
-        {
-            $set: {
-                password: hashedPassword,
-            }
-        },
-        {
-            new: true,
-        }
-    ) 
+   try {
+    
+    currentUser.password = newPassword;
+    currentUser
+        .save()
+        .catch((error)=>next(error));
+        
     return res  
             .status(200)
             .json(
@@ -292,7 +287,39 @@ export const resetPassword = asyncHandler(async (req, res, next)=>{
 })
 
 export const updatePassword = asyncHandler(async (req, res, next)=>{
+    const { oldPassword, newPassword, confirmPassword } = req.body
     
+    if(newPassword != confirmPassword){
+        throw new apiError(406, "password doesn't match!")
+    }
+
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/
+    if(!passwordPattern.test(newPassword)){
+        throw new apiError(406, "Invalid Password!, password must be 8 character and should contain at least one uppercase, lowercase, digit and a special character")
+    }
+
+    try {
+        const currentUser = await User.findById(req.user?._id);
+        
+        if(!currentUser.isPasswordCorrect(oldPassword)){
+            throw new apiError(401, "You are not allowed to update password, as provided credentials is invalid")
+        }
+        
+        currentUser.password = newPassword;
+        currentUser 
+            .save()
+            .then((savedUser)=>{
+                console.log(savedUser)
+            })
+            .catch(error=>next(error))
+        return res
+                .status(200)
+                .json(
+                    new apiResponse(200, "Password updated!")
+                )
+    } catch (error) {
+        next(error)
+    }
 })
 
 export const continueWithGoogle = asyncHandler(async (req, res, next)=>{

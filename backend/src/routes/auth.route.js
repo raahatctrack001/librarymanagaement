@@ -20,7 +20,7 @@ router.route('/register').post(upload.none(),  registerUser);
 router.route('/login').post(upload.none(), logInUser);
 router.route('/logout').post(verifyUser, logOutUser);
 router.route('/reset-password').patch(upload.none(), verifyUser, resetPassword);
-router.route('/update-password').patch(verifyUser, updatePassword);
+router.route('/update-password').patch(upload.none(), verifyUser, updatePassword);
 router.route('/google').post(continueWithGoogle);
 router.route('/delete-user-by-admin/:userId').delete(verifyUser, deleteUserByAdmin);
 

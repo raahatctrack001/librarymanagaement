@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.route('/reserve-book/:bookId').post(upload.none(), verifyUser, reserveBook);
 router.route('/return-book/:bookId').post(upload.none(), verifyUser, returnBook);
-router.route('/get-loan-detail/:bookId').post(verifyUser, getLoanDetail);
+router.route('/get-loan-detail/:bookId').get(verifyUser, getLoanDetail);
 router.route('/get-all-loaned-book').post(verifyUser,getAllLonedBooks);
 router.route('/get-loaned-history/:userId').post(verifyUser, getLoneHistoryOfUser);
 router.route('/get-overdue-loan/:userId').post(verifyUser, getOverDueLone);

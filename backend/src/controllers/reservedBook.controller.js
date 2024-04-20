@@ -196,6 +196,20 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
 })
 
 export const getLoanDetail = asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "You are not a librarian, are you? Contact librarian to help you return this book!")
+    }
+
+    const loanDetail = await Book.findById(req.params?.bookId);
+    if(loanDetail?.copyHolder?.length === 0){
+        throw new apiError(404, "No one is holding this book!")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, 'book and its holder are here!', loanDetail)
+        )
 
 })
 

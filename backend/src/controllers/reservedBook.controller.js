@@ -208,13 +208,26 @@ export const getLoanDetail = asyncHandler(async (req, res, next)=>{
     return res
         .status(200)
         .json(
-            new apiResponse(200, 'book and its holder are here!', loanDetail)
+            new apiResponse(200, `Book ${loanDetail.title} is held by ${loanDetail.copyHolder.length} student till now`, loanDetail)
         )
 
 })
 
 export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
+    const allBooks = await Book.find({});
 
+    let loanedBook = [];
+    allBooks.forEach(book=>{
+        if(book.copyHolder.length > 0){
+            loanedBook.push(book);
+        }
+    })
+
+    return res  
+        .status(200)
+        .json(
+            new apiResponse(200, `${loanedBook.length} books has been loaned till now`, loanedBook)
+        )
 })
 
 export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{

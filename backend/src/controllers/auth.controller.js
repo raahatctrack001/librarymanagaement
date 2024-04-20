@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiResponse from "../utils/apiResponse.js";
-import { createReadStream } from "fs";
+import bcryptjs from 'bcryptjs'
 
 
 const generateAccessAndRefreshToken = async (userId)=>{
@@ -135,6 +135,9 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
 
 export const logInUser = asyncHandler(async (req, res, next)=>{
     const { erpu,  password } = req.body
+    if(!erpu?.trim()){
+        throw new apiError(406, "Please enter email or rollNumber or phone or username")
+    }
     let query = {};
 
     const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;
@@ -173,6 +176,11 @@ export const logInUser = asyncHandler(async (req, res, next)=>{
             throw new apiError(404, "User with this credentials doesn't Exist!")
         }   
         
+        const isPasswordCorrect = await getUser.isPasswordCorrect(password);
+        if(!isPasswordCorrect){
+            throw new apiError(401, "Wrong Credentials!")
+        }
+
         const currentUser = await User.findById(getUser?._id).select('-password -refreshToken');
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(getUser?._id)
     
@@ -195,7 +203,6 @@ export const logOutUser = asyncHandler(async (req, res, next)=>{
                 $set:{
                     refreshToken:1
                 },
-
             },
             {
                 new: true,
@@ -218,11 +225,70 @@ export const logOutUser = asyncHandler(async (req, res, next)=>{
 })
 
 export const deleteUserByAdmin = asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "Unauthorised!, You are not an admin.")
+    }
 
+    try {
+        await User.findByIdAndDelete(req.params?.userId);        
+        return res  
+                .status(200)
+                .json(
+                    new apiResponse(200, "user deleted!")
+                )
+    } catch (error) {
+        next(error)
+    }
 })
 
 export const resetPassword = asyncHandler(async (req, res, next)=>{
-    
+    // console.log(req.user);        
+    // throw new apiError(500, "intentional termination for unit testing");
+
+    const { email, phone, rollNumber, newPassword, confirmPassword } = req.body;
+    if(
+        [email, phone, rollNumber, newPassword, confirmPassword].some(field=>field?.trim()?0:1)
+    ){
+        throw new apiError(406, "All fields are necessary!");
+    }
+
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/    
+    if(newPassword != confirmPassword){
+        throw new apiError(406, "password doesn't match!");
+    }
+
+    if(!passwordPattern.test(newPassword)){
+        throw new apiError(406, "Invalid Password!, password must be 8 character and should contain at least one uppercase, lowercase, digit and a special character")
+    }
+
+    const currentUser = await User.findById(req.user?._id);
+    if(!currentUser){
+        throw new apiError(404, "user with this credentials doesn't exist!");
+    }
+
+    if(email != currentUser?.email && phone != currentUser?.phone && rollNumber != currentUser?.rollNumber){
+        throw new apiError(401, "You are not an authorised person to reset password, as credentials doesn't match with our database")
+    }
+   try {    
+    const hashedPassword = bcryptjs.hashSync(newPassword);
+    const updatedUser = await User.findByIdAndUpdate(currentUser?._id, 
+        {
+            $set: {
+                password: hashedPassword,
+            }
+        },
+        {
+            new: true,
+        }
+    ) 
+    return res  
+            .status(200)
+            .json(
+                new apiResponse(200, "password reset successful!")
+            )
+   }catch (error) {
+        next(error)
+   }
 })
 
 export const updatePassword = asyncHandler(async (req, res, next)=>{

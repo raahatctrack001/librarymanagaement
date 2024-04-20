@@ -5,6 +5,8 @@ import apiError from "../utils/apiError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import apiResponse from "../utils/apiResponse.js"
 import ReservedBook from "../models/reservedBook.model.js"
+import { loadEnvFile } from "process"
+import Fine from "../models/fine.model.js"
 
 const findQuery = (erpu)=>{
     if(!erpu?.trim()){
@@ -37,186 +39,204 @@ const findQuery = (erpu)=>{
 }
 export const reserveBook = asyncHandler(async (req, res, next)=>{
     if(!req.user?.isAdmin){
-        throw new apiError(401, "You are not a librarian, are you? Contact librarian to get u this book!")
+        throw new apiError(401, "You are not a librarian. are you?")
     }
-    try {    
-        const bookToReserve = await Book.findById(req.params?.bookId);
-        if(!bookToReserve){
-            throw new apiError(404, "Book not found!");
-        }
+    const { erpu } = req.body;
+    const query = findQuery(erpu);
 
-        const availableCopies = bookToReserve.availableCopies;
-        const newCopies = parseInt(availableCopies)-1;
-        if(newCopies < 0){
-            throw new apiError(409, "Copies Unavailable! Try coming after some days")
-        }
-    
-        const { erpu } = req.body
-        const query = findQuery(erpu)
-;    
-        const reserveFor = await User.findOne(query); //find gives promises and findOne gives object hence tapping with .operator into promises isn't a good choice if you dont' wan to end up your days finding bugs!
-        if(!reserveFor){
-            throw new apiError(404, "user not found!");
-        }
-        
-        const currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let currentYear = currentDate.getFullYear();
+    const reserveBookFor = await User.findOne(query);
+    if(!reserveBookFor){
+        throw new apiError(404, "User not Found!");
+    }
 
-        currentMonth += 1;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear += 1;
-        }
-        const oneMonthLaterDate = new Date(currentYear, currentMonth);  
-        const reserveBook = await ReservedBook.create(
-            {
-                bookId: bookToReserve,
-                userId: reserveFor,
-                loanDate: currentDate,
-                expectedReturnDate: oneMonthLaterDate,
-            }
-        );
+    const bookToReserve = await Book.findById(req.params?.bookId);
+    if(!bookToReserve){
+        throw new apiError(404, "Book not Found!");
+    }
 
-        if(!reserveBook){
-            throw new apiError(500, "failed to reserve book!");
-        }
-      
-        const alreadyAHolder = reserveFor.bookBank.indexOf(bookToReserve?._id);
-        if(alreadyAHolder != -1){
-            throw new apiError(409, "You already have on copy of this book!, one student can have at most one copy of book.")
-        }
-    
-        const updatedUser = await User.findByIdAndUpdate(
-            reserveFor?._id,
-            {
-                $push:{
-                    bookBank: reserveBook?._id,
-                }
-            }, {
-                new: true,
-            }
-        );
-        
-        const updatedBook = await Book.findByIdAndUpdate(
-            req.params?.bookId,
-            {
-               $push: {
-                    copyHolder: reserveFor?._id,
-               }, 
-               $set: {
-                    availableCopies: newCopies,
-               },
+    const checkIfAlreadyTaken = await ReservedBook.findOne({
+        $and: [{userId: reserveBookFor?._id},{bookId: bookToReserve?._id}]
+    })
+    // takenBook === checkIfAlreadyTaken?._id //not acceptable convert in string or use equals
+    // if(reserveBookFor.bookBank.some(takenBook=>takenBook.toString() === checkIfAlreadyTaken?._id.toString())){
+    //     throw new apiError(406, "You can't have more than 1 copy of same book")
+    // }
+    if(reserveBookFor.bookBank.some(takenBook=>takenBook.equals(checkIfAlreadyTaken?._id))){
+        throw new apiError(406, "You can't have more than 1 copy of same book")
+    }    
+
+    if(reserveBookFor.bookBank.length >= 5){
+        throw new apiError(409, "you can hold at most 5 books at a time!")
+    }
+
+    const currentAvailabeCopies = bookToReserve.availableCopies;
+    if(currentAvailabeCopies <= 0){
+        throw new apiError(404, "Books out of stock!")
+    }
+
+    const currentDate = new Date();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+
+
+    currentMonth += 1; 
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear += 1;
+    }
+    const oneMonthLaterDate = new Date(currentYear, currentMonth);    
+    const loanedBook = await ReservedBook.create({
+        bookId: bookToReserve,
+        userId: reserveBookFor,
+        loanDate: currentDate,
+        expectedReturnDate: oneMonthLaterDate,
+    })
+
+    if(!loanedBook){
+        throw new apiError(500, "Failed to reserve for you!")
+    }
+
+    //update user 
+    const updatedUser = await User.findByIdAndUpdate(
+        reserveBookFor?._id,
+        {
+            $push: {
+                bookBank: loanedBook?._id
             },
-            {
-                new: true,
+        },
+        {
+            new: true,
+        }
+    )
+    //update book
+    const updatedBook = await Book.findByIdAndUpdate(
+        bookToReserve?._id,
+        {
+            $push: {
+                copyHolder: updatedUser?._id,
+            },
+            $set:{
+                availableCopies: currentAvailabeCopies-1,
             }
-        )        
-        return res  
-                .status(200)
-                .json(
-                    new apiResponse(200, "Book added to user's book bank!", {reserveBook, updatedBook})
-                )   
-    } catch (error) {
-        next(error)
-    }
+        },
+        {
+            new: true,
+        }
+    )
+    
+    return res  
+            .status(200)
+            .json(
+                new apiResponse(200, `one copy of book ${updatedBook.title} is now owned by ${updatedUser.fullName}`, loanedBook)
+            )
 })
 
 export const returnBook = asyncHandler(async (req, res, next)=>{
     if(!req.user?.isAdmin){
-        throw new apiError(401, "You are not a librarian, are you? Contact librarian to help you return this book!")
+        throw new apiError(401, "You are not a librarian. are you?")
     }
 
-    const { erpu } = req.body
-        if(!erpu?.trim()){
-            throw new apiError(406, "Please enter email or rollNumber or phone or username")
-        }
-        let query = {};
-    
-        const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;
-        if(dseuEmailPattern.test(erpu)){
-            query = {
-                email: erpu,
-            }
-        }    
-        if(!isNaN(erpu) && erpu.length == 10){
-            query = {
-                phone: erpu,
-            }
-        }    
-        if(!isNaN(erpu) && erpu.length == 8){
-            query = {
-                rollNumber: erpu,
-            }
-        }
-        if(Object.keys(query).length == 0){
-            query = {
-                username: erpu
-            }
-        }
+    const { erpu } = req.body;
+    const query = findQuery(erpu); 
 
-        try {
-            const bookReturner = await User.findOne(query);
-            if(!bookReturner){
-                throw new apiError(404, "User with this credentials doesn't exist")
-            }
-            
-            // console.log(bookReturner.bookBank);
-            // console.log(req.params?.bookId)
-            const bookForReturn = await Book.findById(req.params?.bookId);
-            const newCopies = parseInt(bookForReturn.availableCopies)+1;
-            
-            if(!bookForReturn){
-                throw new apiError(500, "internal server error! book to be returned, data of it isn't available")
-            }
-            // console.log(bookForReturn)
-            let flag = false;
-            if(
-                bookReturner.bookBank.some((book)=>{
-                    return book == req.params?.bookId
-                })
-            ){
-                flag = true;
-            }
-            
-            if(!flag){
-                throw new apiError(404, "Book to be return isn't found!")
-            }
-            
-            const updatedUser = await User.findByIdAndUpdate(
-                bookReturner?._id,
-                {
-                    $pull:{
-                        bookBank: bookForReturn?._id,
-                    }
-                }, {
-                    new: true,
-                }
-            );
-            
-            const updatedBook = await Book.findByIdAndUpdate(
-                req.params?.bookId,
-                {
-                   $pull: {
-                        copyHolder: bookReturner?._id,
-                   }, 
-                   $set: {
-                        availableCopies: newCopies,
-                   },
-                },
-                {
-                    new: true,
-                }
-            )
+    const bookReturner = await User.findOne(query);
+    if(!bookReturner){
+        throw new apiError(404, "User not Found!");
+    }   
     
-            return res
-                    .status(200)
-                    .json(
-                        new apiResponse(200, "book returned!", {updatedUser, updatedBook})
-                    )
-        } catch (error) {
-            next(error)
+    const bookToReturn = await Book.findById(req.params?.bookId);
+    if(!bookToReturn){
+        throw new apiError(404, "Book not Found!");
+    } 
+
+   
+ 
+    // if(reserveBookFor.bookBank.length >= 5){
+    //     throw new apiError(409, "you can hold at most 5 books at a time!")
+    // } 
+    const loanRecord = await ReservedBook.findOne({
+        $and:[{userId: bookReturner?._id}, {bookId: bookToReturn?._id}]
+    })
+
+    if(!loanRecord){
+        throw new apiError(404, "load record does not exist!")
+    }
+    let flag = false;
+    if(bookReturner.bookBank.some(takenBook=>takenBook.equals(loanRecord?._id))){
+        flag = true;
+    }
+    
+    if(!flag){
+        throw new apiError(409, "Book you are trying to return doesn't exist!")
+    }
+
+    const expectedReturnDate = loanRecord.expectedReturnDate
+    const currentDate = new Date();
+    const differenceInMilliseconds = expectedReturnDate-currentDate;
+    const differenceInWeeks = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24 * 7));
+    
+    let fine = 0;
+    if(differenceInWeeks > 0){
+        const finePerWeek = 100
+        fine = finePerWeek*differenceInWeeks
+    }
+    
+    const currentAvailabeCopies = bookToReturn.availableCopies; 
+    const fineRecord = await Fine.create({
+        load: loanRecord,
+        fineAmount: fine,
+        paid: true,
+    })
+
+    if(!fineRecord){
+        throw new apiError(409, "fine error!")
+    }
+    loanRecord.acutalReturnDate = currentDate;
+    loanRecord.fineIfApplicable = fineRecord;
+
+    loanRecord
+        .save()
+        .then((savedRecord)=>{
+            console.log(savedRecord)
+        })
+        .catch((error)=>next(error))  
+    
+    //update user 
+    const updatedUser = await User.findByIdAndUpdate(
+        bookReturner?._id,
+        {
+            $pull: {
+                bookBank: loanRecord?._id
+            },
+        },
+        {
+            new: true,
         }
+    )
+    
+    //update book
+    const updatedBook = await Book.findByIdAndUpdate(
+        bookToReturn?._id,
+        {
+            $pull: {
+                copyHolder: bookReturner?._id,
+            },
+            $set:{
+                availableCopies: currentAvailabeCopies+1,
+            }
+        },
+        {
+            new: true,
+        }
+    )
+
+    return res  
+            .status(200)
+            .json(
+                new apiResponse(200, `one copy of book ${updatedBook.title} is return by ${updatedUser.fullName}`, loanRecord)
+            )
+
+    
 })
 
 export const getLoanDetail = asyncHandler(async (req, res, next)=>{
@@ -234,10 +254,12 @@ export const getLoanDetail = asyncHandler(async (req, res, next)=>{
         .json(
             new apiResponse(200, `Book ${loanDetail.title} is held by ${loanDetail.copyHolder.length} student till now`, loanDetail)
         )
-
 })
 
 export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "You are not a librarian, are you? Contact librarian to help you return this book!")
+    }
     const allBooks = await Book.find({});
 
     let loanedBook = [];
@@ -256,7 +278,23 @@ export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
 
 //leave for now!
 export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
+    console.log(req.body)
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "You are not a librarian, are you? Contact librarian to help you return this book!")
+    }
 
+    const { erpu } = req.body;
+    const query = findQuery(erpu);
+    const userId = await User.find(query);
+    const allLoanes = await ReservedBook.find({userId: userId});
+    console.log(allLoanes)
+
+    return res
+            .status(200)
+            .json(
+                new apiResponse(200, "loan history is here", allLoanes)
+            )
+    
 })
 
 export const getOverDueLone = asyncHandler(async (req, res, next)=>{

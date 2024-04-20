@@ -18,6 +18,9 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
 
         const availableCopies = bookToReserve.availableCopies;
         const newCopies = parseInt(availableCopies)-1;
+        if(newCopies < 0){
+            throw new apiError(409, "Copies Unavailable! Try coming after some days")
+        }
     
         const { erpu } = req.body
         if(!erpu?.trim()){
@@ -201,7 +204,7 @@ export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
 })
 
 export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
-
+                        
 })
 
 export const getOverDueLone = asyncHandler(async (req, res, next)=>{

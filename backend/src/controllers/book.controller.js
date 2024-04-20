@@ -84,11 +84,11 @@ export const getBook = asyncHandler(async (req, res, next)=>{
 })
 
 export const updateBook = asyncHandler(async (req, res, next)=>{
+    // console.log(req.body)
     if(!req.user?.isAdmin){
         throw new apiError(401, "you are not allowed to update book!")
     }
     try {
-
         const formData = req.body;
         // const { title, isbn, topic, author, branchSpecific, availableCopies, totalCopies} = req.body
         // const existingBook = await Book.findById(req.params?.bookId);
@@ -112,37 +112,36 @@ export const updateBook = asyncHandler(async (req, res, next)=>{
                 changes[key] = formData[key];
             }
         }
+
         if(Object.keys(changes).length == 0){
             throw new apiError(204, "plz make some changes then request for update!")
         }
-        let updatedBook = null
-        try{
-            updatedBook = await Book.findByIdAndUpdate(
-                req.user?.bookId,
-                {
-                    $set:{
-                        changes,
-                    }
-                },
-                {
-                    new: true,
-                },
-            )
+
+        // console.log(req.params)
+
+        const updatedBook = await Book.findByIdAndUpdate(
+            req.params?.bookId,
+            {
+                $set: changes // $set: changes not $set: { changes } $set: object not object inside object!
+            },
+            {
+                new: true,
+            }
+        )
+        if(!updatedBook){
+            throw new apiError(500, "failed to update book!")
         }
-        catch(error){
-            next(error)
-        }
-        return res 
+
+        return res  
                 .status(200)
                 .json(
-                    new apiError(200, "book updated!", updatedBook )
+                    new apiResponse(200, "book updated", updatedBook)
                 )
+        
     }
     catch(error){
         next(error);
-    }
-
-      
+    }      
 })
 
 export const deleteBook =  asyncHandler(async (req, res, next)=>{

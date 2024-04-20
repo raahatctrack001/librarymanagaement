@@ -29,11 +29,11 @@ const bookSchema = new mongoose.Schema(
             enum: ['CSE', 'ECE', 'MAE']
         },
         availableCopies: {
-            type: Number,
+            type: String, //Number,
             required: true,
         },
         totalCopies: {
-            type: Number,
+            type: String, //Number,
             require: true,
         },
         photoURL: {

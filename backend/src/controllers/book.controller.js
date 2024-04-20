@@ -1,8 +1,8 @@
-import {bookData }from "../../bookData.js";
 import Book from "../models/book.model.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+
 
 export const addBook = asyncHandler(async (req, res, next)=>{
     if(!req.user?.isAdmin){
@@ -57,6 +57,7 @@ export const addBook = asyncHandler(async (req, res, next)=>{
 
 export const getAllBooks = asyncHandler(async (req, res, next)=>{
     const allBooks = await Book.find({});
+    console.log(allBooks.length)
     if(!allBooks){
         throw new apiError(404, "Error in fetching all books!")
     }
@@ -82,15 +83,111 @@ export const getBook = asyncHandler(async (req, res, next)=>{
 })
 
 export const updateBook = asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "you are not allowed to update book!")
+    }
+    try {
 
+        const formData = req.body;
+        // const { title, isbn, topic, author, branchSpecific, availableCopies, totalCopies} = req.body
+        // const existingBook = await Book.findById(req.params?.bookId);
+        // const fieldToUpdate = {
+        //         ...(existingBook.title !== title && { title: title }),
+        //         ...(existingBook.isbn !== isbn && { isbn: isbn }),
+        //         ...(existingBook.author !== author && { author: author }),
+        //         ...(existingBook.topic !== topic && { topic: topic }),
+        //         ...(existingBook.branchSpecific !== branchSpecific && { branchSpecific: branchSpecific }),
+        //         ...(existingBook.availableCopies != availableCopies && { availableCopies: availableCopies }),
+        //         ...(existingBook.totalCopies != totalCopies && { totalCopies: totalCopies }),
+        // }
+        // if(Object.keys(fieldToUpdate).length === 0){
+        //     throw new apiError(204, "please make some changes then request again for update")
+        // }
+        const existingBook = await Book.findById(req.params?.bookId);
+        let changes = {};
+
+        for(const key in formData){
+            if(formData[key] !== existingBook[key]){
+                changes[key] = formData[key];
+            }
+        }
+        if(Object.keys(changes).length == 0){
+            throw new apiError(204, "plz make some changes then request for update!")
+        }
+        let updatedBook = null
+        try{
+            updatedBook = await Book.findByIdAndUpdate(
+                req.user?.bookId,
+                {
+                    $set:{
+                        changes,
+                    }
+                },
+                {
+                    new: true,
+                },
+            )
+        }
+        catch(error){
+            next(error)
+        }
+        return res 
+                .status(200)
+                .json(
+                    new apiError(200, "book updated!", updatedBook )
+                )
+    }
+    catch(error){
+        next(error);
+    }
+
+      
 })
 
 export const deleteBook =  asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "you are not allowed to make changes here!")
+    }
 
+    try{
+        const deletedBook  = await Book.findByIdAndDelete(req.params?.bookId);
+        console.log(deleteBook)
+        if(!deletedBook){
+            throw new apiError(404, "book to be deleted doesn't exist in this database!")
+        }
+        return res
+                .status(200)
+                .json(
+                    new apiResponse(200, 'book deleted!')
+                )
+    }
+    catch(error){
+        next(error)
+    }
+    
 })
 
 export const getAvailableBooks = asyncHandler(async (req, res, next)=>{
+    const allBooks = await Book.find({});
+    
+    if(!allBooks){
+        throw new apiError(404, "Error in fetching all books!")
+    }
+   
+    let availableBooks = [];
+    allBooks.forEach(book => {
+        if(book.availableCopies > 0){
+            availableBooks.push(book)
+        }
+    });
 
+    console.log(availableBooks.length)
+
+    return res
+            .status(200)
+            .json(
+                new apiResponse(200, "Avalable Books are here!", availableBooks)
+            )
 })
 
 export const searchBook = asyncHandler(async(req, res, next)=>{

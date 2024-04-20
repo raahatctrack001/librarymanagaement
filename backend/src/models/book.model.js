@@ -17,10 +17,12 @@ const bookSchema = new mongoose.Schema(
         topic: {
             type: String,
             require: true,
+            trim: true,
         },
         author: {
             type: String,
             required: true,
+            trim: true,
         },
         branchSpecific: {
             type: String,

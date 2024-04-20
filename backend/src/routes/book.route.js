@@ -9,11 +9,11 @@ import {
     searchBook,
     updateBook
 } from '../controllers/book.controller.js';
-
+import upload from '../middlewares/multer.midleware.js';
 const router = express.Router();
 
-router.route('/add-book').post(verifyAdmin, addBook);
-router.route('/get-all-book').get(getAllBooks);
+router.route('/add-book').post(upload.none(), verifyUser, addBook);
+router.route('/get-all-books').get(getAllBooks);
 router.route('/get-book').get(getBook);
 router.route('/update-book').patch(verifyAdmin, updateBook);
 router.route('/delete-book').delete(verifyAdmin, deleteBook);

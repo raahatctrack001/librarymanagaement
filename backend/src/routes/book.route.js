@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.route('/add-book').post(upload.none(), verifyUser, addBook);
 router.route('/get-all-books').get(getAllBooks);
-router.route('/get-book').get(getBook);
+router.route('/get-book/:bookId').get(getBook);
 router.route('/update-book').patch(verifyAdmin, updateBook);
 router.route('/delete-book').delete(verifyAdmin, deleteBook);
 router.route('/get-available-book').get(getAvailableBooks);

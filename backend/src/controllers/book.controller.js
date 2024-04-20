@@ -57,6 +57,9 @@ export const addBook = asyncHandler(async (req, res, next)=>{
 
 export const getAllBooks = asyncHandler(async (req, res, next)=>{
     const allBooks = await Book.find({});
+    if(!allBooks){
+        throw new apiError(404, "Error in fetching all books!")
+    }
     return res
         .status(200)    
         .json(
@@ -66,6 +69,16 @@ export const getAllBooks = asyncHandler(async (req, res, next)=>{
 })
 
 export const getBook = asyncHandler(async (req, res, next)=>{
+    const getBook = await Book.findById(req.params?.bookId);
+    if(!getBook){
+        throw new apiError(404, "Book not found!")
+    }
+
+    return res  
+            .status(200)
+            .json(
+                new apiResponse(200, "book found!", getBook)
+            )
 })
 
 export const updateBook = asyncHandler(async (req, res, next)=>{

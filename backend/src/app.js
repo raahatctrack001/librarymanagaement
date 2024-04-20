@@ -42,7 +42,7 @@ import userRouter from "./routes/user.router.js";
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/book', bookRouter)
-app.use('/api/v1/book-lone', loneRouter)
+app.use('/api/v1/loan', loneRouter)
 app.use('/api/v1/user', userRouter)
 
 

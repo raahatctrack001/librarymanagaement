@@ -10,10 +10,11 @@ import {
     returnBook 
 } from '../controllers/reservedBook.controller.js';
 import { verifyUser } from '../middlewares/auth.midleware.js';
+import upload from '../middlewares/multer.midleware.js';
 
 const router = express.Router();
 
-router.route('/reserve-book').post(verifyUser, reserveBook);
+router.route('/reserve-book/:bookId').post(upload.none(), verifyUser, reserveBook);
 router.route('/return-book/:bookId').post(verifyUser, returnBook);
 router.route('/get-loan-detail/:bookId').post(verifyUser, getLoanDetail);
 router.route('/get-all-loaned-book').post(verifyUser,getAllLonedBooks);

@@ -8,7 +8,7 @@ const reservedBookSchema = new mongoose.Schema(
             ref: 'Book'
         },
         userId: {
-            type: mongoose.Schema.Types.bookId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
         loanDate: {
@@ -21,7 +21,10 @@ const reservedBookSchema = new mongoose.Schema(
         },
         acutalReturnDate: {
             type: Date,
-            require: true,
+        },
+        fineIfApplicable: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Fine"
         }
     }, {timestamps: true}
 )

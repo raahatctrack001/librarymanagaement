@@ -4,14 +4,43 @@ import User from "../models/user.model.js"
 import apiError from "../utils/apiError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import apiResponse from "../utils/apiResponse.js"
+import ReservedBook from "../models/reservedBook.model.js"
 
+const findQuery = (erpu)=>{
+    if(!erpu?.trim()){
+        throw new apiError(406, "Please enter email or rollNumber or phone or username")
+    }
+    let query = {};
+
+    const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;
+    if(dseuEmailPattern.test(erpu)){
+        query = {
+            email: erpu,
+        }
+    }    
+    if(!isNaN(erpu) && erpu.length == 10){
+        query = {
+            phone: erpu,
+        }
+    }    
+    if(!isNaN(erpu) && erpu.length == 8){
+        query = {
+            rollNumber: erpu,
+        }
+    }
+    if(Object.keys(query).length == 0){
+        query = {
+            username: erpu
+        }
+    }
+    return query;
+}
 export const reserveBook = asyncHandler(async (req, res, next)=>{
     if(!req.user?.isAdmin){
         throw new apiError(401, "You are not a librarian, are you? Contact librarian to get u this book!")
     }
     try {    
         const bookToReserve = await Book.findById(req.params?.bookId);
-        // console.log(bookToReserve)
         if(!bookToReserve){
             throw new apiError(404, "Book not found!");
         }
@@ -23,38 +52,36 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
         }
     
         const { erpu } = req.body
-        if(!erpu?.trim()){
-            throw new apiError(406, "Please enter email or rollNumber or phone or username")
-        }
-        let query = {};
-    
-        const dseuEmailPattern = /^[a-zA-Z0-9._%+-]+@dseu\.ac\.in$/;
-        if(dseuEmailPattern.test(erpu)){
-            query = {
-                email: erpu,
-            }
-        }    
-        if(!isNaN(erpu) && erpu.length == 10){
-            query = {
-                phone: erpu,
-            }
-        }    
-        if(!isNaN(erpu) && erpu.length == 8){
-            query = {
-                rollNumber: erpu,
-            }
-        }
-        if(Object.keys(query).length == 0){
-            query = {
-                username: erpu
-            }
-        }
-    
+        const query = findQuery(erpu)
+;    
         const reserveFor = await User.findOne(query); //find gives promises and findOne gives object hence tapping with .operator into promises isn't a good choice if you dont' wan to end up your days finding bugs!
         if(!reserveFor){
             throw new apiError(404, "user not found!");
         }
         
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        currentMonth += 1;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear += 1;
+        }
+        const oneMonthLaterDate = new Date(currentYear, currentMonth);  
+        const reserveBook = await ReservedBook.create(
+            {
+                bookId: bookToReserve,
+                userId: reserveFor,
+                loanDate: currentDate,
+                expectedReturnDate: oneMonthLaterDate,
+            }
+        );
+
+        if(!reserveBook){
+            throw new apiError(500, "failed to reserve book!");
+        }
+      
         const alreadyAHolder = reserveFor.bookBank.indexOf(bookToReserve?._id);
         if(alreadyAHolder != -1){
             throw new apiError(409, "You already have on copy of this book!, one student can have at most one copy of book.")
@@ -64,7 +91,7 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
             reserveFor?._id,
             {
                 $push:{
-                    bookBank: bookToReserve?._id,
+                    bookBank: reserveBook?._id,
                 }
             }, {
                 new: true,
@@ -84,14 +111,11 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
             {
                 new: true,
             }
-        )
-        // console.log(updatedBook);
-        // console.log(updatedUser)
-        
+        )        
         return res  
                 .status(200)
                 .json(
-                    new apiResponse(200, "Book added to user's book bank!", {updatedUser, updatedBook})
+                    new apiResponse(200, "Book added to user's book bank!", {reserveBook, updatedBook})
                 )   
     } catch (error) {
         next(error)
@@ -158,7 +182,7 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
             if(!flag){
                 throw new apiError(404, "Book to be return isn't found!")
             }
-        
+            
             const updatedUser = await User.findByIdAndUpdate(
                 bookReturner?._id,
                 {
@@ -230,8 +254,9 @@ export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
         )
 })
 
+//leave for now!
 export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
-                        
+
 })
 
 export const getOverDueLone = asyncHandler(async (req, res, next)=>{

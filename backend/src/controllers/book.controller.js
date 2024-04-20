@@ -1,3 +1,4 @@
+import { isErrored } from "stream";
 import Book from "../models/book.model.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
@@ -191,5 +192,32 @@ export const getAvailableBooks = asyncHandler(async (req, res, next)=>{
 })
 
 export const searchBook = asyncHandler(async(req, res, next)=>{
-
+    const searchTerm = req.body.searchTerm;
+    try {        
+        const foundBooks = await Book.find({
+            $or: [
+                { isbn: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search in ISBN field
+                { author: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search in author field
+                { title: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search in title field
+                { topic: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive search in topic field
+                { branchSpecific: { $regex: searchTerm, $options: 'i' } } // Case-insensitive search in branch field
+            ]
+        });
+    
+        if(foundBooks.length == 0){
+            return res  
+                    .status(200)
+                    .json(
+                        new apiResponse(200, "No Match Found!")
+                    )
+        }
+    
+        return res  
+                .status(200)
+                .json(
+                    new apiResponse(200, `${foundBooks.length} books with these keyword found!`, foundBooks)
+                );
+    } catch (error) {
+        next(error)
+    }
 })

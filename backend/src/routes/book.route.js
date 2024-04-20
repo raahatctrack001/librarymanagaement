@@ -18,6 +18,6 @@ router.route('/get-book/:bookId').get(getBook);
 router.route('/update-book/:bookId').patch(upload.none(), verifyUser, updateBook); //leftover
 router.route('/delete-book/:bookId').delete(verifyUser, deleteBook);
 router.route('/get-available-book').get(getAvailableBooks);
-router.route('/search-book/:isbn').get(searchBook);
+router.route('/search-book').get(upload.none(), searchBook);
 
 export default router;

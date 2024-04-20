@@ -1,11 +1,9 @@
-import { stringify } from "querystring"
 import Book from "../models/book.model.js"
 import User from "../models/user.model.js"
 import apiError from "../utils/apiError.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import apiResponse from "../utils/apiResponse.js"
 import ReservedBook from "../models/reservedBook.model.js"
-import { loadEnvFile } from "process"
 import Fine from "../models/fine.model.js"
 
 const findQuery = (erpu)=>{
@@ -298,7 +296,26 @@ export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
 })
 
 export const getOverDueLone = asyncHandler(async (req, res, next)=>{
+    const allBooks = await Book.find({});
+    let loanedBooks;
+    allBooks.forEach((book)=>{
+        if(book.copyHolder.length){
+            loanedBooks.push(book);
+        }
+    })
 
+    let dueDateOverBooks;
+    allBooks.forEach((book)=>{
+        if(currentDate-book.expectedReturnDate < 0){
+            dueDateOverBooks.push(book)
+        }
+    })
+
+    return res  
+            .status(200)
+            .json(
+                new apiResponse(200, `there are ${dueDateOverBooks.length} overdued books`, dueDateOverBooks)
+            );
 })
 
 export const getDueSoonLone = asyncHandler(async (req, res, next)=>{

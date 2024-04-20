@@ -56,9 +56,12 @@ export const addBook = asyncHandler(async (req, res, next)=>{
 })
 
 export const getAllBooks = asyncHandler(async (req, res, next)=>{
-    console.log("api fired!")
     const allBooks = await Book.find({});
-    console.log(allBooks)
+    return res
+        .status(200)    
+        .json(
+            new apiResponse(200, "Books fetched!", allBooks)
+        ) 
     
 })
 

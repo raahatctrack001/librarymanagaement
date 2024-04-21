@@ -1,15 +1,70 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
 const Register = () => {
+    const [formData, setFormData] = useState(
+        {
+            fullName: '',
+            username: '',
+            email: '',
+            phone: '',
+            rollNumber: '',
+            yearOfJoining: '',
+            branch: '',
+            password: '',
+            confirmPassword: ''
+        }
+    );
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    
+    const handleInputChange = (e)=>{
+        setFormData({...formData, [e.target.id]: e.target.value})
+    }
+    const handleFormSubmit = async(e)=>{
+        e.preventDefault();        
+        console.log(Object.keys(formData))
+        if(
+            Object.values(formData).some(value => value === '')
+        ){
+            alert("All field's are necessary!");
+            return;
+        }
+
+     
+        setLoading(true);
+        try {
+          const response = await fetch('your-backend-api-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+    
+          if (!response.ok) {
+            throw new Error('Failed to sign up');
+          }
+    
+          const data = await response.json();
+          console.log('Signup successful', data);
+        } 
+        catch (error) {
+            setError(error.message);
+        } 
+        finally {
+          setLoading(false);
+        }
+    }
     return (
     <div className="min-h-screen py-10 bg-gray-100 flex justify-center items-center">
       <div className="bg-gray-300 p-8 rounded-lg shadow-md w-full sm:max-w-3xl">
         <h2 className="text-2xl font-bold mb-4 text-center">Registration Page</h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleFormSubmit}>
           <div>
             <label htmlFor="fullName" className="block pl-2 text-sm font-medium text-gray-700">Full Name</label>
             <input 
+                onChange = {handleInputChange}
                 type="text" 
                 id="fullName" 
                 className="mt-1 py-2 pl-6 rounded-full block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -17,6 +72,7 @@ const Register = () => {
           <div>
             <label htmlFor="username" className="block pl-2 text-sm font-medium text-gray-700">Username</label>
             <input 
+                onChange = {handleInputChange}
                 type="text" 
                 id="username" 
                 className="mt-1 pl-6 rounded-full  py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -24,6 +80,7 @@ const Register = () => {
           <div>
             <label htmlFor="email" className="block pl-2 text-sm font-medium text-gray-700">Email</label>
             <input 
+                onChange = {handleInputChange}
                 type="email" 
                 id="email" 
                 className="mt- pl-6 rounded-full 1 py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -31,6 +88,7 @@ const Register = () => {
           <div>
             <label htmlFor="phone" className="block pl-2 text-sm font-medium text-gray-700">Phone</label>
             <input 
+                onChange = {handleInputChange}
                 type="tel" 
                 id="phone" 
                 className="mt-1  pl-6 rounded-full py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -38,6 +96,7 @@ const Register = () => {
           <div>
             <label htmlFor="rollNumber" className="block pl-2 text-sm font-medium text-gray-700">Roll Number</label>
             <input 
+                onChange = {handleInputChange}
                 type="text" 
                 id="rollNumber" 
                 className="mt-1 pl-6 rounded-full  py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -45,6 +104,7 @@ const Register = () => {
           <div>
             <label htmlFor="yearOfJoining" className="block pl-2 text-sm font-medium text-gray-700">Year of Joining</label>
             <input 
+                onChange = {handleInputChange}
                 type="text" 
                 id="yearOfJoining" 
                 className="mt pl-6 rounded-full py-2 block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -52,6 +112,7 @@ const Register = () => {
           <div>
             <label htmlFor="branch" className="block text-sm font-medium text-gray-700">Branch</label>
             <select 
+                onChange = {handleInputChange}
                 id="branch" 
                 className="mt-1 py-2 block w-full pl-6 rounded-full rounded-e-2xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
               <option value="CSE">CSE</option>
@@ -63,6 +124,7 @@ const Register = () => {
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input 
+                onChange = {handleInputChange}
                 type="password" 
                 id="password" 
                 className="mt-1 py-2 pl-6 rounded-full block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
@@ -70,6 +132,7 @@ const Register = () => {
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <input 
+                onChange = {handleInputChange}
                 type="password" 
                 id="confirmPassword" 
                 className="mt-1 py-2 pl-6 rounded-full block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />

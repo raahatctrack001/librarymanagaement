@@ -25,9 +25,7 @@ const Home = () => {
           </div>
         </section>
       </main>
-      <footer className="py-6 text-center">
-        <p className="text-gray-600">&copy; 2024 Library Management System. All rights reserved.</p>
-      </footer>
+      
     </div>
   );
 };

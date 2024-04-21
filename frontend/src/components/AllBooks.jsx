@@ -1,9 +1,142 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaEllipsisV } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const AllBooks = () => {
-  return (
-    <div>AllBooks</div>
-  )
-}
+  const { currentUser } = useSelector(state => state.user)
+  const [books, setBooks] = useState([]);
+  const [error, setError] = useState('');
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-export default AllBooks
+  const handleOptionSelect = (book) => {
+    if (selectedBook && selectedBook.isbn === book.isbn) {
+      setSelectedBook(null); // Close dropdown if the same book is clicked again
+      setIsDropdownOpen(false);
+    } else {
+      setSelectedBook(book);
+      setIsDropdownOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/v1/book/get-all-books'); // Assuming /api/books is the endpoint for fetching books
+        const data = await response?.json();
+
+        if (!response.ok) {
+          setError(data.message)
+        }
+        setBooks(data.data);
+        // console.log(data)
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        setError('Failed to fetch books. Please try again later.');
+      }
+    };
+
+    fetchData();
+ 
+  }, []);
+ 
+  const handleReserve = async () => {
+    // Logic to reserve the book
+    const erpu = prompt("Enter UID: Email, Roll, Phone or Username")
+    // console.log('erpu: ', erpu)
+    // console.log('selectedBook: ', selectedBook?._id)
+
+    if(!erpu?.trim()){
+      alert("Without UID, we can't reserve this book for you.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/loan/reserve-book/${selectedBook?._id}/${erpu}`,
+    {
+      method: 'POST'
+    }); // Assuming /api/books is the endpoint for fetching books
+      const data = await response?.json();
+      
+      if (!response.ok) {
+        alert(data.message);
+        return;
+        // setError(data.message)
+      }
+
+      if(data.success){
+        alert(data.message);
+      }
+      // setBooks(data.data);
+      // console.log(data)
+    } catch (error) {
+      alert(error.message)
+      // console.error('Error fetching books:', error);
+      // setError('Failed to fetch books. Please try again later.');
+    } 
+  };
+
+  const handleReturn = async ()=>{
+    console.log('Returning book:', selectedBook);
+  }
+
+  const handleDelete = async () => {
+    // Logic to delete the book
+    console.log('Deleting book:', selectedBook);
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8 bg-gray-400">
+      <h2 className="text-2xl font-bold mb-4">All Books</h2>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {books.map(book => (
+          <div key={book.isbn} className="bg-white rounded-3xl shadow-md p-4 relative hover:bg-gray-300">
+            <img src={book.photoURL} alt={book.title} className="h-40 w-full object-cover mb-4" />
+            <h3 className="text-xl font-semibold mb-2">{book.title}</h3>
+            <p className="text-gray-600 mb-2">Author: {book.author}</p>
+            <p className="text-gray-600 mb-2">Topic: {book.topic}</p>
+            <p className="text-gray-600 mb-2">Branch Specific: {book.branchSpecific}</p>
+            <p className="text-gray-600 mb-2">Available Copies: {book.availableCopies}</p>
+            <p className="text-gray-600 mb-2">Total Copies: {book.totalCopies}</p>
+            {/* Three dots dropdown */}
+           { currentUser?.isAdmin && ( 
+            <div className="absolute top-2 right-2">
+              <div className="relative">
+                <button className="text-gray-600 focus:outline-none" onClick={() => handleOptionSelect(book)}>
+                  <FaEllipsisV size={24} />
+                </button>
+                {/* Dropdown content */}
+                {selectedBook && selectedBook.isbn === book.isbn && isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
+                    <div className="py-1">
+                      <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={handleReserve}>
+                        Reserve Book
+                      </button>
+
+                      <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={handleReturn}>
+                        Return Book
+                      </button>
+                      
+                      <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={handleDelete}>
+                        Delete Book
+                      </button>
+                      
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>)
+           }
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default AllBooks;

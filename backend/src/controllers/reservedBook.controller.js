@@ -36,10 +36,11 @@ const findQuery = (erpu)=>{
     return query;
 }
 export const reserveBook = asyncHandler(async (req, res, next)=>{
+    console.log(req.params)
     if(!req.user?.isAdmin){
         throw new apiError(401, "You are not a librarian. are you?")
     }
-    const { erpu } = req.body;
+    const erpu  = req.params?.userId;
     const query = findQuery(erpu);
 
     const reserveBookFor = await User.findOne(query);

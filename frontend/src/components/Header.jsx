@@ -68,7 +68,7 @@ const Header = () => {
         </button>
         {
           currentUser ? 
-          (<Dropdown className='p-2 bg-black text-white rounded-3xl' label={currentUser?.username} arrowIcon={false}>
+          (<Dropdown className='p-2 z-10 bg-black text-teal-800 rounded-3xl' label={currentUser?.username} arrowIcon={false}>
             <Link to={'/dashboard'}>
               <Dropdown.Header>
                 <span className="block font-semibold">{currentUser?.fullName}</span>

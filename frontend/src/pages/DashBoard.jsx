@@ -34,26 +34,25 @@ export default function Dashboard() {
   }, [location.search]);
   return (
     <div className='min-h-screen flex flex-col md:flex-row'>
-      <div className='md:w-56'>
+      <div className='w-1/4 h-screen'>
         {/* Sidebar */}
         <DashSidebar />
       </div>
-      {tab === 'profile' && <Profile />}
-      {tab === 'add-book' && <AddBook />}
-      {tab === 'update-book' && <UpdateBook />}
-      {tab === 'delete-book' && <DeleteBook />}
-      {tab === 'reserve-book' && <ReserveBook/>}
-      {tab === 'return-book' && <ReturnBook/>}
-      {tab === 'loaned-user' && <LoanedUsers />}
-      {tab === 'loaned-book' && <LoanedBooks />}
-      {tab === 'all-users' && <AllUsers />}
-      {tab === 'all-books' && <AllBooks />}
-      {tab === 'over-due-users' && <OverDueUsers />}
-      {tab === 'available-books' && <AvailableBooks />}
-      {tab === 'book-bank' && <BookBank />}
-     
-
-    
+      <div className='flex-grow flex items-center justify-center'>
+          {tab === 'profile' && <Profile />}
+          {tab === 'add-book' && <AddBook />}
+          {tab === 'update-book' && <UpdateBook />}
+          {tab === 'delete-book' && <DeleteBook />}
+          {tab === 'reserve-book' && <ReserveBook/>}
+          {tab === 'return-book' && <ReturnBook/>}
+          {tab === 'loaned-user' && <LoanedUsers />}
+          {tab === 'loaned-book' && <LoanedBooks />}
+          {tab === 'all-users' && <AllUsers />}
+          {tab === 'all-books' && <AllBooks />}
+          {tab === 'over-due-users' && <OverDueUsers />}
+          {tab === 'available-books' && <AvailableBooks />}
+          {tab === 'book-bank' && <BookBank />}
+      </div> 
     </div>
   );
 }

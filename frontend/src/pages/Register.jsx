@@ -97,6 +97,7 @@ const Register = () => {
           <div>
             <label htmlFor="email" className="block pl-2 text-sm font-medium text-gray-700">Email</label>
             <input 
+                onChange = {handleInputChange} 
                 type="email" 
                 id="email" 
                 className="mt- pl-6 rounded-full 1 py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />

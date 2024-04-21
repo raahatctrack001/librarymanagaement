@@ -1,7 +1,7 @@
 import { Alert, Button } from 'flowbite-react';
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 const SignIn = () => {
   const [formData, setFormData] = useState(
@@ -10,8 +10,10 @@ const SignIn = () => {
         password: '',
       }
     );
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const { loading } = useSelector(state => state.user);
+    const { error } = useSelector(state => state.user);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState(null);
     const naviate = useNavigate();
     const dispatch = useDispatch()
 

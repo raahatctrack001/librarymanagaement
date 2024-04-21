@@ -47,7 +47,7 @@ const SignIn = () => {
             return;
           }
           if(data.success){
-            naviate('/');
+            naviate('/dashboard');
             setError(null);
           }
         

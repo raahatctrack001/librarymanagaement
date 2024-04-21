@@ -1,6 +1,6 @@
 // Header.jsx
-import React, { useDebugValue } from 'react';
-import { FaCodeBranch, FaExchangeAlt, FaInfo, FaMailchimp, FaMoon, FaPhone, FaSearch, FaSignOutAlt } from 'react-icons/fa'
+import React, { useDebugValue, useState } from 'react';
+import { FaCodeBranch, FaExchangeAlt, FaIdCard, FaInfo, FaMailchimp, FaMoon, FaPhone, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 import { TextInput, Dropdown } from 'flowbite-react'
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,28 +9,12 @@ import { signOutSuccess } from '../redux/user/userSlice';
 
 
 
-// import { Dropdown } from "flowbite-react";
-
-export function Component() {
-  return (
-    <Dropdown label="Dropdown">
-      <Dropdown.Header>
-        <span className="block text-sm">Bonnie Green</span>
-        <span className="block truncate text-sm font-medium">bonnie@flowbite.com</span>
-      </Dropdown.Header>
-      <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
-      <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
-      <Dropdown.Item icon={HiCurrencyDollar}>Earnings</Dropdown.Item>
-      <Dropdown.Divider />
-      <Dropdown.Item icon={HiLogout}>Sign out</Dropdown.Item>
-    </Dropdown>
-  );
-}
 
 const Header = () => {
   const { currentUser } = useSelector(state=>state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+ 
 
   const handleSignOut = async()=>{   
      try {
@@ -79,16 +63,21 @@ const Header = () => {
         {
           currentUser ? 
           (<Dropdown className='p-2 bg-black text-white rounded-3xl' label={currentUser?.username} arrowIcon={false}>
-            <Dropdown.Header>
-              <span className="block font-semibold">{currentUser?.fullName}</span>
-              {/* <span className="block text-black font-semibold">{currentUser?.rollNumber}</span> */}
-              <span className="block truncate text-sm font-medium">{currentUser?.email}</span>
-            </Dropdown.Header>
-            <Dropdown.Divider className='border-b-2 border-black' />
+            <Link to={'/dashboard'}>
+              <Dropdown.Header>
+                <span className="block font-semibold">{currentUser?.fullName}</span>
+                {/* <span className="block text-black font-semibold">{currentUser?.rollNumber}</span> */}
+                <span className="block truncate text-sm font-medium">{currentUser?.email}</span>
+              </Dropdown.Header>
+            </Link>
+            <Dropdown.Divider className='border-b-2 border-white' />
             <Dropdown.Item  className='pl-1' icon={HiMail}>{currentUser?.email}</Dropdown.Item>
             <Dropdown.Item  className='pl-1' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
             <Dropdown.Item  className='pl-1' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
-            <Dropdown.Divider className='border-b-2 border-black' />
+            <Link to={'/l-card'} >
+              <Dropdown.Item  className='pl-1' icon={FaIdCard}>Library Card</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider className='border-b-2 border-white' />
           
             <Link to={'/profile'}>
               <Dropdown.Item className='pl-1' icon={FaInfo}>Update Profile</Dropdown.Item>            

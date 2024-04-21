@@ -8,6 +8,7 @@ import About from "./pages/About"
 import Projects from "./pages/Projects"
 import DashBoard from "./pages/DashBoard"
 import ProfilePage from "./pages/ProfilePage"
+import LibraryCard from "./pages/LibraryCard"
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/project" element = {<Projects />} />
           <Route path="/dashboard" element = {<DashBoard />} />
           <Route path="/profile" element = {<ProfilePage />} />
+          <Route path="/l-card" element = {<LibraryCard />} />
         </Routes>
       <Footer />
     </BrowserRouter>

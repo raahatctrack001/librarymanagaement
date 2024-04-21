@@ -19,7 +19,7 @@ router.route('/return-book/:bookId').post(upload.none(), verifyUser, returnBook)
 router.route('/get-loan-detail/:bookId').get(verifyUser, getLoanDetail);
 router.route('/get-all-loaned-book').get(verifyUser,getAllLonedBooks);
 router.route('/get-loan-history').get(upload.none(), verifyUser, getLoneHistoryOfUser);
-router.route('/get-overdue-loan/:userId').post(verifyUser, getOverDueLone);
-router.route('/get-due-soon-loaned/:userId').post(verifyUser, getDueSoonLone);
+router.route('/get-overdue-loan').post(verifyUser, getOverDueLone);
+// router.route('/get-due-soon-loaned/:userId').post(verifyUser, getDueSoonLone);
 
 export default router

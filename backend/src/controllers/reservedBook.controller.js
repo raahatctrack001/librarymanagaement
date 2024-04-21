@@ -318,6 +318,6 @@ export const getOverDueLone = asyncHandler(async (req, res, next)=>{
             );
 })
 
-export const getDueSoonLone = asyncHandler(async (req, res, next)=>{
+// export const getDueSoonLone = asyncHandler(async (req, res, next)=>{
 
-})
+// })

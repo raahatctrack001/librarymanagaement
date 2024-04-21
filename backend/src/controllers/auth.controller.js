@@ -239,7 +239,7 @@ export const deleteUserByAdmin = asyncHandler(async (req, res, next)=>{
     } catch (error) {
         next(error)
     }
-})
+}) //left to add in frontend
 
 export const resetPassword = asyncHandler(async (req, res, next)=>{
     // console.log(req.user);        

@@ -1,10 +1,11 @@
 // Header.jsx
-import React from 'react';
-import { FaCodeBranch, FaMailchimp, FaMoon, FaPhone, FaSearch } from 'react-icons/fa'
+import React, { useDebugValue } from 'react';
+import { FaCodeBranch, FaExchangeAlt, FaInfo, FaMailchimp, FaMoon, FaPhone, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 import { TextInput, Dropdown } from 'flowbite-react'
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { HiCog, HiCurrencyDollar, HiLogout, HiMail, HiViewGrid } from "react-icons/hi";
+import { signOutSuccess } from '../redux/user/userSlice';
 
 
 
@@ -28,7 +29,37 @@ export function Component() {
 
 const Header = () => {
   const { currentUser } = useSelector(state=>state.user);
-  console.log(currentUser)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSignOut = async()=>{   
+     try {
+      const response = await fetch("/api/v1/auth/logout", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      const data = await response?.json();
+      if (!response.ok) {
+        console.log('failed')
+        return;
+      }
+      if(data.success){
+        dispatch(signOutSuccess());
+        navigate('/sign-in');
+
+      }
+    } 
+    catch (error) {
+        console.log(error)
+    }
+  }
+
+  const handleUpdatePassword = ()=>{
+
+  }
   return (
     <header className="flex flex-col md:flex-row items-center justify-between px-4 py-5 bg-gray-800 text-white">
       <div className="flex my-auto items-center">
@@ -47,7 +78,7 @@ const Header = () => {
         </button>
         {
           currentUser ? 
-          (<Dropdown className='p-2 bg-teal-100 rounded-3xl' label={currentUser?.username} arrowIcon={false}>
+          (<Dropdown className='p-2 bg-black text-white rounded-3xl' label={currentUser?.username} arrowIcon={false}>
             <Dropdown.Header>
               <span className="block font-semibold">{currentUser?.fullName}</span>
               {/* <span className="block text-black font-semibold">{currentUser?.rollNumber}</span> */}
@@ -58,7 +89,11 @@ const Header = () => {
             <Dropdown.Item  className='pl-1' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
             <Dropdown.Item  className='pl-1' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
             <Dropdown.Divider className='border-b-2 border-black' />
-            <Dropdown.Item  className='pl-1' icon={HiLogout}>Sign out</Dropdown.Item>            
+          
+            <Link to={'/profile'}>
+              <Dropdown.Item className='pl-1' icon={FaInfo}>Update Profile</Dropdown.Item>            
+            </Link>
+            <Dropdown.Item onClick={handleSignOut} className='pl-1' icon={HiLogout}>Sign out</Dropdown.Item>            
           </Dropdown>) : 
           (            
         <Link to={'/sign-in'}>

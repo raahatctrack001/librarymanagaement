@@ -7,6 +7,7 @@ import Register from "./pages/Register"
 import About from "./pages/About"
 import Projects from "./pages/Projects"
 import DashBoard from "./pages/DashBoard"
+import ProfilePage from "./pages/ProfilePage"
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/about" element = {<About />} />
           <Route path="/project" element = {<Projects />} />
           <Route path="/dashboard" element = {<DashBoard />} />
+          <Route path="/profile" element = {<ProfilePage />} />
         </Routes>
       <Footer />
     </BrowserRouter>

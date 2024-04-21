@@ -18,7 +18,7 @@ const Register = () => {
     );
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const naviate = useNavigate();
+    const navigate = useNavigate();
     
     
     const handleInputChange = (e)=>{
@@ -53,7 +53,7 @@ const Register = () => {
             return;
           }
           if(data.success){
-            naviate('/sign-in');
+            navigate('/sign-in');
             setError(null);
           }
     
@@ -76,6 +76,7 @@ const Register = () => {
             </Alert>
           )
         }
+                onChange = {handleInputChange}
         <form className="space-y-4" onSubmit={handleFormSubmit}>
           <div>
             <label htmlFor="fullName" className="block pl-2 text-sm font-medium text-gray-700">Full Name</label>
@@ -96,7 +97,6 @@ const Register = () => {
           <div>
             <label htmlFor="email" className="block pl-2 text-sm font-medium text-gray-700">Email</label>
             <input 
-                onChange = {handleInputChange}
                 type="email" 
                 id="email" 
                 className="mt- pl-6 rounded-full 1 py-2 block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />

@@ -1,7 +1,8 @@
 import { Alert, Button } from 'flowbite-react';
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux'
+import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 const SignIn = () => {
   const [formData, setFormData] = useState(
       {
@@ -12,6 +13,7 @@ const SignIn = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const naviate = useNavigate();
+    const dispatch = useDispatch()
 
 
     const handleInputChange = (e)=>{
@@ -19,18 +21,19 @@ const SignIn = () => {
     }
     console.log(formData)
     const handleFormSubmit = async(e)=>{
-        e.preventDefault();        
+        e.preventDefault();      
         console.log(Object.keys(formData))
         if(
-            Object.values(formData).some(value => value === '')
+          Object.values(formData).some(value => value === '')
         ){
-            alert("All field's are necessary!");
-            return;
+          alert("All field's are necessary!");
+          return;
         }
-      
-      
+        
+        
         setLoading(true);
         try {
+          dispatch(signInStart())  
           const response = await fetch("/api/v1/auth/login", {
             method: 'POST',
             headers: {
@@ -43,10 +46,13 @@ const SignIn = () => {
           // console.log(data.message)
           // // // console.log(data)
           if (!response.ok) {
+            dispatch(signInFailure(data.message))
             setError(data.message);
             return;
           }
+          console.log(data)
           if(data.success){
+            dispatch(signInSuccess(data.data))
             naviate('/dashboard');
             setError(null);
           }
@@ -73,7 +79,11 @@ const SignIn = () => {
         <form className="space-y-4" onSubmit={handleFormSubmit}>
          
           <div>
-            <label htmlFor="username" className="block pl-2 text-sm font-medium text-gray-700">Username</label>
+            <label 
+            htmlFor="username" 
+            className="block pl-2 text-sm font-medium text-gray-700">
+            Unique Identifier
+            </label>
             <input 
                 onChange={handleInputChange}
                 type="text" 

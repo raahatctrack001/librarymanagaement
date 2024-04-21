@@ -1,6 +1,7 @@
 import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import {
   updateStart,
@@ -16,6 +17,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 
 export default function Profile() {
+  const navigate = useNavigate();
   const { currentUser, error, loading } = useSelector(state => state.user);
   const [disable, setDisable] = useState(false)
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
@@ -131,17 +133,12 @@ export default function Profile() {
             </select>
           </div>
 
-          <div>
-          <Button> update password </Button>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input 
-                disabled='true'
-                onChange = {handleInputChange}
-                defaultValue = '****************'
-                type="password" 
-                id="password" 
-                className="mt-1 py-2 pl-6 rounded-full block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
-          </div>
+          <Button
+            onClick={()=>{
+              navigate('/update-password')
+            }} 
+            className='text-white bg-red-600 text-2xl'> Update Password </Button>
+     
           <Button
           className='text-white bg-blue-600 text-2xl'
           type='submit'      

@@ -9,6 +9,7 @@ import Projects from "./pages/Projects"
 import DashBoard from "./pages/DashBoard"
 import ProfilePage from "./pages/ProfilePage"
 import LibraryCard from "./pages/LibraryCard"
+import UpdatePassword from "./pages/UpdatePassword"
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element = {<DashBoard />} />
           <Route path="/profile" element = {<ProfilePage />} />
           <Route path="/l-card" element = {<LibraryCard />} />
+          <Route path="/update-password" element = {<UpdatePassword />} />
         </Routes>
       <Footer />
     </BrowserRouter>

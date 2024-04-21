@@ -14,6 +14,13 @@ import ReserveBook from '../components/ReserveBook';
 import DashSidebar from '../components/DashSideBar';
 import ReturnBook from '../components/ReturnBook';
 import Profile from './ProfilePage';
+import DeleteBook from '../components/DeleteBook';
+import LoanedUsers from '../components/LoanedUsers';
+import LoanedBooks from '../components/LoanedBooks';
+import AllUsers from '../components/AllUsers';
+import OverDueUsers from '../components/OverDueUsers';
+// import AllBook from '../components/AllBooks';
+import AllBooks from '../components/AllBooks';
 
 export default function Dashboard() {
   const location = useLocation();
@@ -33,12 +40,19 @@ export default function Dashboard() {
       </div>
       {tab === 'profile' && <Profile />}
       {tab === 'add-book' && <AddBook />}
-      {tab === 'book-bank' && <BookBank />}
       {tab === 'update-book' && <UpdateBook />}
-      {tab === 'available-books' && <AvailableBooks />}
+      {tab === 'delete-book' && <DeleteBook />}
       {tab === 'reserve-book' && <ReserveBook/>}
       {tab === 'return-book' && <ReturnBook/>}
-    
+      {tab === 'loaned-user' && <LoanedUsers />}
+      {tab === 'loaned-book' && <LoanedBooks />}
+      {tab === 'all-users' && <AllUsers />}
+      {tab === 'all-books' && <AllBooks />}
+      {tab === 'over-due-users' && <OverDueUsers />}
+      {tab === 'available-books' && <AvailableBooks />}
+      {tab === 'book-bank' && <BookBank />}
+     
+
     
     </div>
   );

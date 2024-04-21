@@ -164,13 +164,13 @@ export default function DashSidebar() {
               
             </>
           )}
-          <Link to='/dashboard?tab=all-book'>
+          <Link to='/dashboard?tab=all-books'>
                 <Sidebar.Item
-                  active={tab === 'all-book'}
+                  active={tab === 'all-books'}
                   icon={FaBookAtlas}
                   as='div'
                 >
-                  All Book
+                  All Books
                 </Sidebar.Item>
               </Link>
           <Link to='/dashboard?tab=available-books'>

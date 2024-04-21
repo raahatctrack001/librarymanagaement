@@ -6,6 +6,8 @@ import SignIn from "./pages/SignIn"
 import Register from "./pages/Register"
 import About from "./pages/About"
 import Projects from "./pages/Projects"
+import DashBoard from "./pages/DashBoard"
+
 
 function App() {
 
@@ -18,6 +20,7 @@ function App() {
           <Route path="/register" element = {<Register />} />
           <Route path="/about" element = {<About />} />
           <Route path="/project" element = {<Projects />} />
+          <Route path="/dashboard" element = {<DashBoard />} />
         </Routes>
       <Footer />
     </BrowserRouter>

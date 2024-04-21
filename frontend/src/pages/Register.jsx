@@ -1,5 +1,6 @@
+import { Alert } from 'flowbite-react';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [formData, setFormData] = useState(
@@ -17,6 +18,8 @@ const Register = () => {
     );
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const naviate = useNavigate();
+    
     
     const handleInputChange = (e)=>{
         setFormData({...formData, [e.target.id]: e.target.value})
@@ -34,7 +37,7 @@ const Register = () => {
      
         setLoading(true);
         try {
-          const response = await fetch('your-backend-api-url', {
+          const response = await fetch("/api/v1/auth/register", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -42,12 +45,18 @@ const Register = () => {
             body: JSON.stringify(formData)
           });
     
+          const data = await response?.json();
+          // console.log(data.message)
+          // // // console.log(data)
           if (!response.ok) {
-            throw new Error('Failed to sign up');
+            setError(data.message);
+            return;
+          }
+          if(data.success){
+            naviate('/sign-in');
+            setError(null);
           }
     
-          const data = await response.json();
-          console.log('Signup successful', data);
         } 
         catch (error) {
             setError(error.message);
@@ -60,6 +69,13 @@ const Register = () => {
     <div className="min-h-screen py-10 bg-gray-100 flex justify-center items-center">
       <div className="bg-gray-300 p-8 rounded-lg shadow-md w-full sm:max-w-3xl">
         <h2 className="text-2xl font-bold mb-4 text-center">Registration Page</h2>
+        {
+          error && (
+            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2'>
+              {error}
+            </Alert>
+          )
+        }
         <form className="space-y-4" onSubmit={handleFormSubmit}>
           <div>
             <label htmlFor="fullName" className="block pl-2 text-sm font-medium text-gray-700">Full Name</label>
@@ -115,6 +131,7 @@ const Register = () => {
                 onChange = {handleInputChange}
                 id="branch" 
                 className="mt-1 py-2 block w-full pl-6 rounded-full rounded-e-2xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+              <option value="CSE">NA</option>
               <option value="CSE">CSE</option>
               <option value="MAE">MAE</option>
               <option value="ECE">ECE</option>

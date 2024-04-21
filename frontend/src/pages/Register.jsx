@@ -66,8 +66,8 @@ const Register = () => {
         }
     }
     return (
-    <div className="min-h-screen py-10 bg-gray-100 flex justify-center items-center">
-      <div className="bg-gray-300 p-8 rounded-lg shadow-md w-full sm:max-w-3xl">
+    <div className="min-h-screen py-10 text-black bg-gray-100 flex justify-center items-center">
+      <div className="p-8 bg-gray-300 rounded-lg shadow-md w-full sm:max-w-3xl">
         <h2 className="text-2xl font-bold mb-4 text-center">Registration Page</h2>
         {
           error && (
@@ -76,7 +76,7 @@ const Register = () => {
             </Alert>
           )
         }
-                onChange = {handleInputChange}
+             
         <form className="space-y-4" onSubmit={handleFormSubmit}>
           <div>
             <label htmlFor="fullName" className="block pl-2 text-sm font-medium text-gray-700">Full Name</label>

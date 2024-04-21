@@ -1,16 +1,19 @@
 // Header.jsx
 import React, { useDebugValue, useState } from 'react';
-import { FaCodeBranch, FaExchangeAlt, FaIdCard, FaInfo, FaMailchimp, FaMoon, FaPhone, FaSearch, FaSignOutAlt } from 'react-icons/fa'
-import { TextInput, Dropdown } from 'flowbite-react'
+import { FaCodeBranch, FaExchangeAlt, FaIdCard, FaInfo, FaMailchimp, FaMoon, FaPhone, FaSearch, FaSignOutAlt, FaSun } from 'react-icons/fa'
+import { TextInput, Dropdown, ThemeModeScript } from 'flowbite-react'
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { HiCog, HiCurrencyDollar, HiLogout, HiMail, HiViewGrid } from "react-icons/hi";
 import { signOutSuccess } from '../redux/user/userSlice';
+import { toggleTheme } from '../redux/theme/themeSlice.js';
 
 
 
 
 const Header = () => {
+  const { theme } = useSelector(state => state.theme)
+  console.log(theme)
   const { currentUser } = useSelector(state=>state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,8 +60,11 @@ const Header = () => {
         </div>
       </div>
       <div className="flex items-center gap-4 mt-4 md:mt-0 md:ml-4">
-        <button className="h-12 w-14 px-5 bg-blue-500 text-white rounded-lg focus:outline-none hover:bg-blue-600">
-          <FaMoon />
+        <button 
+        className="h-12 w-14 px-5 bg-blue-500 text-white rounded-lg focus:outline-none hover:bg-blue-600"
+        onClick={()=>dispatch(toggleTheme())}
+        >
+          {theme === 'light' ? <FaMoon /> : <FaSun />}
         </button>
         {
           currentUser ? 

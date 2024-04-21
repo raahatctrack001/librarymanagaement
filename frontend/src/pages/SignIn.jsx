@@ -33,7 +33,7 @@ const SignIn = () => {
         }
         
         
-        setLoading(true);
+        // setLoading(true);
         try {
           dispatch(signInStart())  
           const response = await fetch("/api/v1/auth/login", {
@@ -49,22 +49,20 @@ const SignIn = () => {
           // // // console.log(data)
           if (!response.ok) {
             dispatch(signInFailure(data.message))
-            setError(data.message);
+            // setError(data.message);
             return;
           }
           console.log(data)
           if(data.success){
             dispatch(signInSuccess(data.data))
             naviate('/dashboard');
-            setError(null);
+            // setError(null);
           }
         
         } 
         catch (error) {
+            dispatch(signInFailure(error.message));
             setError(error.message);
-        } 
-        finally {
-          setLoading(false);
         }
     }
     return (

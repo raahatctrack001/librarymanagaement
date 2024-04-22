@@ -14,6 +14,7 @@ import ReserveSuccess from "./components/ReserveSuccess"
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute"
 import PrivateRoute from "./components/PrivateRoute"
 import UpdateBook from "./components/UpdateBook"
+import SearchBooks from "./components/SearchBooks"
 
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
             <Route path="/dashboard?tab=update-book" element = {<UpdateBook />} />
             <Route path="/update-book/:bookId" element = {<UpdateBook />} />
           </Route>
+
+          <Route path="/search-book/:searchTerm" element = {<SearchBooks />} />
   
 
         </Routes>

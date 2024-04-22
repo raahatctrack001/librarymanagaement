@@ -46,16 +46,19 @@ const Header = () => {
   const handleUpdatePassword = ()=>{
 
   }
+  const handleSearch = (e)=>{
+    navigate(`/search-book/${e.target.value}`);
+  }
   return (
     <header className="flex flex-col md:flex-row items-center justify-between px-4 py-5 bg-gray-800 text-white">
       <div className="flex my-auto items-center">
         <div className="text-lg font-bold">Library Management System</div>
         <div className="md:ml-4 mt-4 md:mt-0">
-          <TextInput
-            type="text"
-            placeholder="Search..."
-            className="px-3 py-1 w-full md:w-auto border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500"
-          />
+          <input
+            placeholder='search about books' 
+            className='px-3 py-1 bg-gray-300 text-gray-800 rounded-2xl' 
+            onChange={handleSearch}
+            />
         </div>
       </div>
       <div className="flex items-center gap-4 mt-4 md:mt-0 md:ml-4">

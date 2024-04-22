@@ -255,7 +255,7 @@ export const getAvailableBooks = asyncHandler(async (req, res, next)=>{
 })
 
 export const searchBook = asyncHandler(async(req, res, next)=>{
-    const searchTerm = req.body.searchTerm;
+    const { searchTerm } = req.params;
     try {        
         const foundBooks = await Book.find({
             $or: [

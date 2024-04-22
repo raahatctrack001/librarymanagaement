@@ -141,6 +141,7 @@ const AllBooks = () => {
             <p className="text-gray-600 mb-2">Branch Specific: {book.branchSpecific}</p>
             <p className="text-gray-600 mb-2">Available Copies: {book.availableCopies}</p>
             <p className="text-gray-600 mb-2">Total Copies: {book.totalCopies}</p>
+            <p className="text-gray-600 mb-2">Book Holder's Count: {book.copyHolder.length}</p>
             {/* Three dots dropdown */}
            { currentUser?.isAdmin && ( 
             <div className="absolute top-2 right-2">

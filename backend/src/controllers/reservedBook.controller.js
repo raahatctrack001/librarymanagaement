@@ -135,7 +135,7 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
         throw new apiError(401, "You are not a librarian. are you?")
     }
 
-    const { erpu } = req.body;
+    const erpu  = req.params?.userId;
     const query = findQuery(erpu); 
 
     const bookReturner = await User.findOne(query);

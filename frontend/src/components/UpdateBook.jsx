@@ -1,14 +1,16 @@
 import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
-import {  useState } from 'react';
+import {  useRef, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function UpdateBook() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const filePickerRef = useRef();
+  const { currentUser } = useSelector(state=>state.user)
 
   const [formData, setFormData] = useState(
         {
@@ -75,12 +77,14 @@ export default function UpdateBook() {
           setLoading(false);
         }
     }
+  const handleImageChange = ()=>{
 
+  }
   return (
     <div className='max-w-3xl m-5 rounded-3xl mx-auto p-5 w-full bg-gray-200 text-black'>
     <div className='flex flex-col items-center'>
-      <h1 className='my-7 text-center font-semibold text-3xl'>Update Book</h1>
-      <p> Enter the details below </p>
+      <h1 className='mt-7 mb-2 text-center font-semibold text-3xl'>Update Book</h1>
+      <p className='mb-9'> Enter the details below </p>
     </div>
        {
           error && (
@@ -97,6 +101,24 @@ export default function UpdateBook() {
           )
         }
       <form onSubmit={handleFormSubmit} className='flex flex-col gap-4'>      
+      <input
+          type='file'
+          accept='image/*'
+          onChange={handleImageChange}
+          ref={filePickerRef}
+          hidden
+        />
+        <div
+          className='relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full'
+          onClick={() => filePickerRef.current.click()}>
+          
+            
+          <img
+            src={currentUser.profilePhoto}
+            alt='user'
+            className={`rounded-full w-full h-full object-cover border-8`}
+          />
+        </div>  
         <div>
             <label htmlFor="title" className="block pl-2 text-sm font-medium text-gray-700"> Title </label>
             <input 

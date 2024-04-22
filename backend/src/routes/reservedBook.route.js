@@ -15,7 +15,7 @@ import upload from '../middlewares/multer.midleware.js';
 const router = express.Router();
 
 router.route('/reserve-book/:bookId/:userId').post(upload.none(), verifyUser, reserveBook);
-router.route('/return-book/:bookId').post(upload.none(), verifyUser, returnBook);
+router.route('/return-book/:bookId/:userId').post(upload.none(), verifyUser, returnBook);
 router.route('/get-loan-detail/:bookId').get(verifyUser, getLoanDetail);
 router.route('/get-all-loaned-book').get(verifyUser,getAllLonedBooks);
 router.route('/get-loan-history').get(upload.none(), verifyUser, getLoneHistoryOfUser);

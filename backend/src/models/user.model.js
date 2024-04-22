@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
         },
         profilePhoto: {
             type: String,
-            default: "https://tse3.mm.bing.net/th?id=OIP.Cl56H6WgxJ8npVqyhefTdQHaHa&pid=Api&P=0&h=180"
+            default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
         },
         bookBank: {
             type: [

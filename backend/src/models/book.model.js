@@ -38,7 +38,7 @@ const bookSchema = new mongoose.Schema(
         },
         photoURL: {
             type: String,
-            default: "https://tse3.mm.bing.net/th?id=OIP.Cl56H6WgxJ8npVqyhefTdQHaHa&pid=Api&P=0&h=180"
+            default: "https://tse4.mm.bing.net/th?id=OIP.lLg_C0QrY2TJp-ekpwMBIwHaEK&pid=Api&P=0&h=180"
         },
         copyHolder: {
             type: [

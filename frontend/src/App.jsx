@@ -10,6 +10,7 @@ import DashBoard from "./pages/DashBoard"
 import ProfilePage from "./pages/ProfilePage"
 import LibraryCard from "./pages/LibraryCard"
 import UpdatePassword from "./pages/UpdatePassword"
+import ReserveSuccess from "./components/ReserveSuccess"
 
 
 function App() {
@@ -27,6 +28,8 @@ function App() {
           <Route path="/profile" element = {<ProfilePage />} />
           <Route path="/l-card" element = {<LibraryCard />} />
           <Route path="/update-password" element = {<UpdatePassword />} />
+  
+
         </Routes>
       <Footer />
     </BrowserRouter>

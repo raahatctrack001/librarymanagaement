@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { Navigate, useNavigate, useResolvedPath } from 'react-router-dom';
+import ReserveSuccess from './ReserveSuccess';
 
 const AllBooks = () => {
+  const navigate = useNavigate();
   const { currentUser } = useSelector(state => state.user)
   const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const [reserveData, setReserveData] = useState({});
+  const [userId, setUserId] = useState({});
+  const [bookId, setBookId] = useState({});
   const handleOptionSelect = (book) => {
     if (selectedBook && selectedBook.isbn === book.isbn) {
       setSelectedBook(null); // Close dropdown if the same book is clicked again
@@ -21,6 +26,7 @@ const AllBooks = () => {
   };
 
   useEffect(() => {
+    setReserveData(null);
     const fetchData = async () => {
       try {
         const response = await fetch('/api/v1/book/get-all-books'); // Assuming /api/books is the endpoint for fetching books
@@ -42,10 +48,8 @@ const AllBooks = () => {
   }, []);
  
   const handleReserve = async () => {
-    // Logic to reserve the book
+
     const erpu = prompt("Enter UID: Email, Roll, Phone or Username")
-    // console.log('erpu: ', erpu)
-    // console.log('selectedBook: ', selectedBook?._id)
 
     if(!erpu?.trim()){
       alert("Without UID, we can't reserve this book for you.");
@@ -56,7 +60,43 @@ const AllBooks = () => {
       const response = await fetch(`/api/v1/loan/reserve-book/${selectedBook?._id}/${erpu}`,
     {
       method: 'POST'
-    }); // Assuming /api/books is the endpoint for fetching books
+    });
+      const data = await response?.json();
+      console.log(data)
+      if (!response.ok) {
+        alert(data.message);
+        return;
+        // setError(data.message)
+      }
+
+      if(data.success){
+        setReserveData(data.data);
+        alert(data.message);
+        
+      }
+      // setBooks(data.data);
+      // console.log(data)
+    } catch (error) {
+      alert(error.message)
+      // console.error('Error fetching books:', error);
+      // setError('Failed to fetch books. Please try again later.');
+    } 
+  };
+
+
+  const handleReturn = async ()=>{
+    const erpu = prompt("Enter UID: Email, Roll, Phone or Username")
+
+    if(!erpu?.trim()){
+      alert("Without UID, we can't reserve this book for you.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/loan/return-book/${selectedBook?._id}/${erpu}`,
+    {
+      method: 'POST'
+    });
       const data = await response?.json();
       
       if (!response.ok) {
@@ -75,9 +115,6 @@ const AllBooks = () => {
       // console.error('Error fetching books:', error);
       // setError('Failed to fetch books. Please try again later.');
     } 
-  };
-
-  const handleReturn = async ()=>{
     console.log('Returning book:', selectedBook);
   }
 
@@ -88,9 +125,13 @@ const AllBooks = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-400">
+      <div className='block'>
+        {reserveData && <ReserveSuccess props = {reserveData} />}     
+      </div>
       <h2 className="text-2xl font-bold mb-4">All Books</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
         {books.map(book => (
           <div key={book.isbn} className="bg-white rounded-3xl shadow-md p-4 relative hover:bg-gray-300">
             <img src={book.photoURL} alt={book.title} className="h-40 w-full object-cover mb-4" />

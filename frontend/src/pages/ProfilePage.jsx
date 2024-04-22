@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { currentUser, error, loading } = useSelector(state => state.user);
+  const { currentUser, loading, error } = useSelector(state => state.user);
   const [disable, setDisable] = useState(false)
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
@@ -142,7 +142,7 @@ export default function Profile() {
           <Button
           className='text-white bg-blue-600 text-2xl'
           type='submit'      
-          disabled={loading || imageFileUploading}
+      
         >
           {loading ? 'Loading...' : 'Update'}
         </Button>

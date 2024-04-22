@@ -21,6 +21,7 @@ import AllUsers from '../components/AllUsers';
 import OverDueUsers from '../components/OverDueUsers';
 // import AllBook from '../components/AllBooks';
 import AllBooks from '../components/AllBooks';
+import DashOutput from '../components/DashOutput';
 
 export default function Dashboard() {
   const location = useLocation();
@@ -39,6 +40,7 @@ export default function Dashboard() {
         <DashSidebar />
       </div>
       <div className='flex-grow flex items-center justify-center'>
+          {(!tab || tab === 'dash') && <DashOutput />}
           {tab === 'profile' && <Profile />}
           {tab === 'add-book' && <AddBook />}
           {/* {tab === 'update-book' && <UpdateBook />} */}

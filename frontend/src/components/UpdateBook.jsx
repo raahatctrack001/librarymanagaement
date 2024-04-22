@@ -1,6 +1,6 @@
 import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
 import {  useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateStart } from '../redux/user/userSlice';
 
@@ -89,6 +89,7 @@ export default function UpdateBook() {
     
         } 
         catch (error) {
+            setLoading(false)
             setError(error.message);
         } 
         finally {
@@ -204,8 +205,7 @@ export default function UpdateBook() {
               <option value="MAE">MAE</option>
               <option value="ECE">ECE</option>
             </select>
-          </div>
-
+          </div>        
          
           <Button
           className='text-white bg-blue-600 text-2xl'
@@ -214,6 +214,14 @@ export default function UpdateBook() {
         >
           {loading ? 'Loading...' : 'Update Book'}
         </Button>
+          <Button
+            className='text-white e-full bg-blue-600 text-2xl'
+            type='button'
+            onClick={()=>navigate('/dashboard')}
+          >
+          Go To Dashboard
+          </Button>
+        
       </form>
       
      

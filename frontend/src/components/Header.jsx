@@ -12,8 +12,7 @@ import { toggleTheme } from '../redux/theme/themeSlice.js';
 
 
 const Header = () => {
-  const { theme } = useSelector(state => state.theme)
-  console.log(theme)
+  
   const { currentUser } = useSelector(state=>state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,7 +63,7 @@ const Header = () => {
         className="h-12 w-14 px-5 bg-blue-500 text-white rounded-lg focus:outline-none hover:bg-blue-600"
         onClick={()=>dispatch(toggleTheme())}
         >
-          {theme === 'light' ? <FaMoon /> : <FaSun />}
+        <FaMoon /> 
         </button>
         {
           currentUser ? 

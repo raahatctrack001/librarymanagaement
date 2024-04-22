@@ -269,7 +269,7 @@ export const getLoanDetail = asyncHandler(async (req, res, next)=>{
 
 export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
     if(!req.user?.isAdmin){
-        throw new apiError(401, "You are not a librarian, are you? Contact librarian to help you return this book!")
+        throw new apiError(401, "You are not a librarian, are you?")
     }
     const allBooks = await Book.find({});
 
@@ -287,6 +287,25 @@ export const getAllLonedBooks = asyncHandler(async (req, res, next)=>{
         )
 })
 
+export const getAllLonedUsers = asyncHandler(async (req, res, next)=>{
+    if(!req.user?.isAdmin){
+        throw new apiError(401, "You are not a librarian, are you?")
+    }
+    const allUsers = await User.find({});
+
+    let loanedUser = [];
+    allUsers.forEach(user=>{
+        if(user.bookBank.length > 0){
+            loanedUser.push(user);
+        }
+    })
+
+    return res  
+        .status(200)
+        .json(
+            new apiResponse(200, `${loanedUser.length} books has been loaned till now`, loanedUser)
+        )
+})
 //leave for now!
 export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
     console.log(req.body)

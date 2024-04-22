@@ -1,6 +1,7 @@
 
 import { bookData } from "../../bookData.js";
 import Book from "../models/book.model.js";
+import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -11,7 +12,10 @@ export const addBook = asyncHandler(async (req, res, next)=>{
         throw new apiError(403, "You are not allowed to add book in book store!")
     }
 
+
+
     // let n = 0; bulk book add
+    // await Book.deleteMany({})
     // bookData.map(async (book)=>{
     //     await Book.create({
     //         title: book.title, 
@@ -27,6 +31,10 @@ export const addBook = asyncHandler(async (req, res, next)=>{
 
     //     console.log(n)
     // })
+
+    // await User.deleteMany({})
+    //     .then(()=>console.log('deleted all users'))
+    //     .catch((error)=>console.log(error))
 
 
 

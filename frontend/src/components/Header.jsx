@@ -79,18 +79,18 @@ const Header = () => {
               </Dropdown.Header>
             </Link>
             <Dropdown.Divider className='border-b-2 border-white' />
-            <Dropdown.Item  className='pl-1' icon={HiMail}>{currentUser?.email}</Dropdown.Item>
-            <Dropdown.Item  className='pl-1' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
-            <Dropdown.Item  className='pl-1' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
+            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={HiMail}>{currentUser?.email}</Dropdown.Item>
+            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
+            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
             <Link to={'/l-card'} >
-              <Dropdown.Item  className='pl-1' icon={FaIdCard}>Library Card</Dropdown.Item>
+              <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaIdCard}>Library Card</Dropdown.Item>
             </Link>
-            <Dropdown.Divider className='border-b-2 border-white' />
+            <Dropdown.Divider className='border-b-2 border-white hover:bg-red-800' />
           
             <Link to={'/profile'}>
-              <Dropdown.Item className='pl-1' icon={FaInfo}>Update Profile</Dropdown.Item>            
+              <Dropdown.Item className='pl-1 hover:bg-red-800' icon={FaInfo}>Update Profile</Dropdown.Item>            
             </Link>
-            <Dropdown.Item onClick={handleSignOut} className='pl-1' icon={HiLogout}>Sign out</Dropdown.Item>            
+            <Dropdown.Item onClick={handleSignOut} className='pl-1 hover:bg-red-800' icon={HiLogout}>Sign out</Dropdown.Item>            
           </Dropdown>) : 
           (            
         <Link to={'/sign-in'}>

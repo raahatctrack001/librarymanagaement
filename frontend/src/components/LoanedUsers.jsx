@@ -25,8 +25,8 @@ const LoanedUsers = () => {
 
   return (
     <div className="all-user-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-      {error && <div className="error">{error}</div>}
-      {users.map((user, index) => (
+    {error && <div className="error">{error}</div>}
+      {users && users.map((user, index) => (
         <div key={index} className="user-card bg-white shadow-md rounded-lg overflow-hidden">
           <img src={user.profilePhoto} alt="Profile" className="w-full h-40 object-cover object-center rounded-t-lg" />
           <div className="p-4">

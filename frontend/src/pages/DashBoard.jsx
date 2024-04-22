@@ -22,6 +22,7 @@ import OverDueUsers from '../components/OverDueUsers';
 // import AllBook from '../components/AllBooks';
 import AllBooks from '../components/AllBooks';
 import DashOutput from '../components/DashOutput';
+import OverDueBooks from '../components/OverDueBooks';
 
 
 
@@ -68,6 +69,7 @@ export default function Dashboard() {
           {tab === 'over-due-users' && <OverDueUsers />}
           {tab === 'available-books' && <AvailableBooks />}
           {tab === 'book-bank' && <BookBank />}
+          {tab === 'over-due-books' && <OverDueBooks />}
       </div> 
     </div>
   );

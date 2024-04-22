@@ -329,14 +329,16 @@ export const getLoneHistoryOfUser = asyncHandler(async (req, res, next)=>{
 
 export const getOverDueLone = asyncHandler(async (req, res, next)=>{
     const allBooks = await Book.find({});
-    let loanedBooks;
+    let loanedBooks = [];
     allBooks.forEach((book)=>{
         if(book.copyHolder.length){
             loanedBooks.push(book);
         }
     })
 
-    let dueDateOverBooks;
+    let dueDateOverBooks = [];
+
+    const currentDate = new Date();
     allBooks.forEach((book)=>{
         if(currentDate-book.expectedReturnDate < 0){
             dueDateOverBooks.push(book)

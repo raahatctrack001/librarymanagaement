@@ -161,6 +161,15 @@ export default function DashSidebar() {
                  Over Due Users
                 </Sidebar.Item>
               </Link>
+              <Link to='/dashboard?tab=over-due-books'>
+                <Sidebar.Item
+                  active={tab === 'over-due-books'}
+                  icon={FaPeopleLine}
+                  as='div'
+                >
+                 Over Due books
+                </Sidebar.Item>
+              </Link>
               
             </>
           )}

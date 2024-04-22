@@ -49,7 +49,7 @@ const AllBooks = () => {
  
   const handleReserve = async () => {
 
-    const erpu = prompt("Enter UID: Email, Roll, Phone or Username")
+    const erpu = prompt("Enter UID: Email, Roll, Phone or Username of reserver")
 
     if(!erpu?.trim()){
       alert("Without UID, we can't reserve this book for you.");
@@ -85,7 +85,7 @@ const AllBooks = () => {
 
 
   const handleReturn = async ()=>{
-    const erpu = prompt("Enter UID: Email, Roll, Phone or Username")
+    const erpu = prompt("Enter UID: Email, Roll, Phone or Username of returner")
 
     if(!erpu?.trim()){
       alert("Without UID, we can't reserve this book for you.");
@@ -119,8 +119,27 @@ const AllBooks = () => {
   }
 
   const handleDelete = async () => {
-    // Logic to delete the book
     console.log('Deleting book:', selectedBook);
+    const erpu = prompt("Enter you UID.")
+    try {
+      const response = await fetch(`/api/v1/book//delete-book//${selectedBook?._id}/${erpu}`,{
+          method: 'DELETE',
+        });
+
+      const data = await response?.json();
+      console.log(data)
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      if(data.success){
+        alert(data.message);
+        
+      }
+    } catch (error) {
+      alert(error.message)
+    } 
   };
 
   return (
@@ -170,6 +189,13 @@ const AllBooks = () => {
                       <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
                         onClick={handleDelete}>
                         Delete Book
+                      </button>
+
+                      <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={()=>{
+                          navigate(`/update-book/${selectedBook?._id}`)
+                        }}>
+                        Update Book
                       </button>
                       
                     </div>

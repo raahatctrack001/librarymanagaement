@@ -41,10 +41,10 @@ export default function Dashboard() {
       <div className='flex-grow flex items-center justify-center'>
           {tab === 'profile' && <Profile />}
           {tab === 'add-book' && <AddBook />}
-          {tab === 'update-book' && <UpdateBook />}
-          {tab === 'delete-book' && <DeleteBook />}
-          {tab === 'reserve-book' && <ReserveBook/>}
-          {tab === 'return-book' && <ReturnBook/>}
+          {/* {tab === 'update-book' && <UpdateBook />} */}
+          {/* {tab === 'delete-book' && <DeleteBook />}
+          {tab === 'reserve-book' && <ReserveBook/>} */}
+          {/* {tab === 'return-book' && <ReturnBook/>} */}
           {tab === 'loaned-user' && <LoanedUsers />}
           {tab === 'loaned-book' && <LoanedBooks />}
           {tab === 'all-users' && <AllUsers />}

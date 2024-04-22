@@ -6,6 +6,7 @@ import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { findQuery } from "./reservedBook.controller.js";
 
 
 export const addBook = asyncHandler(async (req, res, next)=>{
@@ -191,8 +192,27 @@ export const updateBook = asyncHandler(async (req, res, next)=>{
 })
 
 export const deleteBook =  asyncHandler(async (req, res, next)=>{
+    console.log(req.params)
     if(!req.user?.isAdmin){
-        throw new apiError(401, "you are not allowed to make changes here!")
+        throw new apiError(401, "you are not allowed to delete book!")
+    }
+
+    const adminId = req.params?.adminId;
+    
+    const query = findQuery(adminId);
+
+    const admin = await User.findOne(query);
+    if(!admin){
+        throw new apiError(404, "Admin not found");
+    }
+    console.log(admin)
+    if(!admin?.isAdmin){
+        throw new apiError(409, "Only admin can delete books.")
+    }
+
+    const bookToDelete = await Book.findById(req.params?.bookId)
+    if(!bookToDelete){
+        throw new apiError(404, "Book to be deleted doesn't exist")
     }
 
     try{
@@ -204,7 +224,7 @@ export const deleteBook =  asyncHandler(async (req, res, next)=>{
         return res
                 .status(200)
                 .json(
-                    new apiResponse(200, 'book deleted!')
+                    new apiResponse(200, `book ${bookToDelete?.title} is being deleted by ${admin?.fullName}`)
                 )
     }
     catch(error){

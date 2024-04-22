@@ -1,33 +1,46 @@
 import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
-import {  useRef, useState } from 'react';
-
-import { useNavigate } from 'react-router-dom';
-
+import {  useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateStart } from '../redux/user/userSlice';
 
 
 export default function UpdateBook() {
+  const { bookId } = useParams(); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const filePickerRef = useRef();
   const { currentUser } = useSelector(state=>state.user)
 
-
-  const [formData, setFormData] = useState(
-        {
-            title: '',
-            isbn: '',
-            topic: '',
-            author: '',
-            branchSpecific: '',
-            availableCopies: '',
-            totalCopies: '',
-        }
-    );
+  const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [prevData, setPrevData] = useState({});
+
+    useEffect(async()=>{        
+       
+        try {
+          const response = await fetch(`/api/v1/book/get-book/${bookId}`, {
+            method: 'GET',
+          });
+    
+          const data = await response?.json();
+         
+          if (!response.ok) {            
+            alert(data.message)
+          }
+          if(data.success){  
+            setPrevData(data.data)                    
+          }    
+    
+        } 
+        catch (error) {
+            alert(error.message)
+        } 
+       
+    }, [])
+    
     
     
     const handleInputChange = (e)=>{
@@ -38,20 +51,19 @@ export default function UpdateBook() {
         e.preventDefault();       
         setError(null);
         setSuccess(null); 
-        dispatch(updateStart())
-        console.log(Object.keys(formData))
-        if(
-            Object.values(formData).some(value => value === '')
-        ){
-            alert("All field's are necessary!");
-            return;
-        }
+        // console.log(Object.keys(formData))
+        // if(
+        //     Object.values(formData).some(value => value === '')
+        // ){
+        //     alert("All field's are necessary!");
+        //     return;
+        // }
 
      
         setLoading(true);
         try {
-          const response = await fetch("/api/v1/book/add-book", {
-            method: 'POST',
+          const response = await fetch(`/api/v1/book/update-book/${bookId}`, {
+            method: 'PATCH',
             headers: {
               'Content-Type': 'application/json'
             },
@@ -67,6 +79,7 @@ export default function UpdateBook() {
             return;
           }
           if(data.success){
+            setPrevData(data.data)
             setSuccess(data.message);
             setLoading(false);
             alert(data.message)
@@ -100,13 +113,14 @@ export default function UpdateBook() {
         }
         {
           success && (
-            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2'>
+            <Alert color='failure' className='mt-5 bg-green-500 mt-5 text-white mb-2 p-2'>
               {success}
             </Alert>
           )
         }
       <form onSubmit={handleFormSubmit} className='flex flex-col gap-4'>      
       <input
+          
           type='file'
           accept='image/*'
           onChange={handleImageChange}
@@ -119,7 +133,7 @@ export default function UpdateBook() {
           
             
           <img
-            src={currentUser.profilePhoto}
+            src= {prevData.photoURL}
             alt='user'
             className={`rounded-full w-full h-full object-cover border-8`}
           />
@@ -127,6 +141,7 @@ export default function UpdateBook() {
         <div>
             <label htmlFor="title" className="block pl-2 text-sm font-medium text-gray-700"> Title </label>
             <input 
+                defaultValue={prevData.title}
                 onChange = {handleInputChange}              
                 type="text" 
                 id="title" 
@@ -135,6 +150,7 @@ export default function UpdateBook() {
           <div>
             <label htmlFor="isbn" className="block pl-2 text-sm font-medium text-gray-700">isbn</label>
             <input 
+                defaultValue={prevData.isbn}
                 onChange = {handleInputChange}           
                 type="text" 
                 id="isbn" 
@@ -142,7 +158,8 @@ export default function UpdateBook() {
           </div>
           <div>
             <label htmlFor="author" className="block pl-2 text-sm font-medium text-gray-700">Author</label>
-            <input                 
+            <input     
+                defaultValue={prevData.author}            
                 onChange = {handleInputChange} 
                 type="text" 
                 id="author" 
@@ -151,6 +168,7 @@ export default function UpdateBook() {
           <div>
             <label htmlFor="topic" className="block pl-2 text-sm font-medium text-gray-700">Topic</label>
             <input 
+                defaultValue={prevData.topic}
                 onChange = {handleInputChange}                
                 type="tel" 
                 id="topic" 
@@ -159,6 +177,7 @@ export default function UpdateBook() {
           <div>
             <label htmlFor="available" className="block pl-2 text-sm font-medium text-gray-700">Available Copies</label>
             <input 
+                defaultValue={prevData.availableCopies}
                 onChange = {handleInputChange}                
                 type="text" 
                 id="availableCopies" 
@@ -167,6 +186,7 @@ export default function UpdateBook() {
           <div>
             <label htmlFor="total" className="block pl-2 text-sm font-medium text-gray-700">Total Copies</label>
             <input 
+                defaultValue={prevData.totalCopies}
                 onChange = {handleInputChange}               
                 type="text" 
                 id="totalCopies" 
@@ -175,6 +195,7 @@ export default function UpdateBook() {
           <div>
             <label htmlFor="branch" className="block text-sm font-medium text-gray-700">Branch Specific</label>
             <select 
+                defaultValue={prevData.branchSpecific}
                 onChange = {handleInputChange}                
                 id="branchSpecific" 
                 className="mt-1 py-2 block w-full pl-6 rounded-full rounded-e-2xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
@@ -191,7 +212,7 @@ export default function UpdateBook() {
           type='submit'      
           disabled={loading}
         >
-          {loading ? 'Loading...' : 'Add Book'}
+          {loading ? 'Loading...' : 'Update Book'}
         </Button>
       </form>
       

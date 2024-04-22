@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaGit, FaGithub, FaLinkedin } from 
 
 const Footer = () => {
   return (
-    <footer className="py-8 bg-gray-900 text-white">
+    <footer className="py-8 mt-10 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="footer-section flex flex-col justify-center">

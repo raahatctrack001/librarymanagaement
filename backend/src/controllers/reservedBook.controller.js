@@ -6,7 +6,7 @@ import apiResponse from "../utils/apiResponse.js"
 import ReservedBook from "../models/reservedBook.model.js"
 import Fine from "../models/fine.model.js"
 
-const findQuery = (erpu)=>{
+export const findQuery = (erpu)=>{
     if(!erpu?.trim()){
         throw new apiError(406, "Please enter email or rollNumber or phone or username")
     }

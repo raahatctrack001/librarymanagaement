@@ -88,7 +88,7 @@ export default function DashSidebar() {
               </Sidebar.Item>
             </Link>
           
-              <Link to='/dashboard?tab=update-book'>
+              {/* <Link to='/dashboard?tab=update-book'>
                 <Sidebar.Item
                   active={tab === 'update-book'}
                   icon={HiUpload}
@@ -96,8 +96,8 @@ export default function DashSidebar() {
                 >
                   Update Book
                 </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=delete-book'>
+              </Link> */}
+              {/* <Link to='/dashboard?tab=delete-book'>
                 <Sidebar.Item
                   active={tab === 'delete-book'}
                   icon={HiUpload}
@@ -105,9 +105,9 @@ export default function DashSidebar() {
                 >
                   delete Book
                 </Sidebar.Item>
-              </Link>
+              </Link> */}
               
-              <Link to='/dashboard?tab=reserve-book'>
+              {/* <Link to='/dashboard?tab=reserve-book'>
                 <Sidebar.Item
                   active={tab === 'reserve-book'}
                   icon={HiFolderAdd}
@@ -115,8 +115,8 @@ export default function DashSidebar() {
                 >
                   Reserve Book
                 </Sidebar.Item>
-              </Link>
-              <Link to='/dashboard?tab=return-book'>
+              </Link> */}
+              {/* <Link to='/dashboard?tab=return-book'>
                 <Sidebar.Item
                   active={tab === 'return-book'}
                   icon={HiReceiptRefund}
@@ -124,7 +124,7 @@ export default function DashSidebar() {
                 >
                   Return Book
                 </Sidebar.Item>
-              </Link>
+              </Link> */}
               <Link to='/dashboard?tab=loaned-user'>
                 <Sidebar.Item
                   active={tab === 'loaned-user'}

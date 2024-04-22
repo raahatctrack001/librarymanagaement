@@ -37,6 +37,7 @@ function App() {
 
           <Route element={<OnlyAdminPrivateRoute />}>
             <Route path="/dashboard?tab=update-book" element = {<UpdateBook />} />
+            <Route path="/update-book/:bookId" element = {<UpdateBook />} />
           </Route>
   
 

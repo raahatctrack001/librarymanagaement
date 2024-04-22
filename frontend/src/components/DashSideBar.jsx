@@ -37,17 +37,26 @@ export default function DashSidebar() {
   }, [location.search]);
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
+      const response = await fetch("/api/v1/auth/logout", {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
       });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        dispatch(signOutSuccess());
+
+      const data = await response?.json();
+      if (!response.ok) {
+        console.log('failed')
+        return;
       }
-    } catch (error) {
-      console.log(error.message);
+      if(data.success){
+        dispatch(signOutSuccess());
+        navigate('/sign-in');
+
+      }
+    } 
+    catch (error) {
+        console.log(error)
     }
   };
   return (

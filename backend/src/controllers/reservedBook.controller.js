@@ -36,7 +36,7 @@ const findQuery = (erpu)=>{
     return query;
 }
 export const reserveBook = asyncHandler(async (req, res, next)=>{
-    console.log(req.params)
+    // console.log(req.params)
     if(!req.user?.isAdmin){
         throw new apiError(401, "You are not a librarian. are you?")
     }
@@ -68,7 +68,8 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
         throw new apiError(409, "you can hold at most 5 books at a time!")
     }
 
-    const currentAvailabeCopies = bookToReserve.availableCopies;
+    let currentAvailabeCopies = bookToReserve.availableCopies;
+    currentAvailabeCopies -= 1;
     if(currentAvailabeCopies <= 0){
         throw new apiError(404, "Books out of stock!")
     }
@@ -115,7 +116,7 @@ export const reserveBook = asyncHandler(async (req, res, next)=>{
                 copyHolder: updatedUser?._id,
             },
             $set:{
-                availableCopies: currentAvailabeCopies-1,
+                availableCopies: currentAvailabeCopies,
             }
         },
         {
@@ -137,7 +138,7 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
 
     const erpu  = req.params?.userId;
     const query = findQuery(erpu); 
-
+    
     const bookReturner = await User.findOne(query);
     if(!bookReturner){
         throw new apiError(404, "User not Found!");
@@ -147,27 +148,30 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
     if(!bookToReturn){
         throw new apiError(404, "Book not Found!");
     } 
-
-   
- 
+    
+    
+    
     // if(reserveBookFor.bookBank.length >= 5){
-    //     throw new apiError(409, "you can hold at most 5 books at a time!")
-    // } 
+        //     throw new apiError(409, "you can hold at most 5 books at a time!")
+        // } 
     const loanRecord = await ReservedBook.findOne({
         $and:[{userId: bookReturner?._id}, {bookId: bookToReturn?._id}]
     })
-
-    if(!loanRecord){
-        throw new apiError(404, "load record does not exist!")
-    }
-    let flag = false;
-    if(bookReturner.bookBank.some(takenBook=>takenBook.equals(loanRecord?._id))){
-        flag = true;
-    }
     
-    if(!flag){
-        throw new apiError(409, "Book you are trying to return doesn't exist!")
+    if(!loanRecord){
+        throw new apiError(404, `There's no loan record for ${bookReturner.fullName} holding ${bookToReturn.title} Book`)
     }
+  
+
+
+    // let flag = false;
+    // if(bookReturner.bookBank.some(takenBook=>takenBook.equals(loanRecord?._id))){
+    //     flag = true;
+    // }
+    
+    // if(!flag){
+    //     throw new apiError(409, "Book you are trying to return doesn't exist!")
+    // }
 
     const expectedReturnDate = loanRecord.expectedReturnDate
     const currentDate = new Date();
@@ -180,7 +184,9 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
         fine = finePerWeek*differenceInWeeks
     }
     
-    const currentAvailabeCopies = bookToReturn.availableCopies; 
+    let currentAvailabeCopies = bookToReturn.availableCopies; 
+    currentAvailabeCopies += 1;
+
     const fineRecord = await Fine.create({
         load: loanRecord,
         fineAmount: fine,
@@ -201,6 +207,7 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
         .catch((error)=>next(error))  
     
     //update user 
+    
     const updatedUser = await User.findByIdAndUpdate(
         bookReturner?._id,
         {
@@ -221,13 +228,18 @@ export const returnBook = asyncHandler(async (req, res, next)=>{
                 copyHolder: bookReturner?._id,
             },
             $set:{
-                availableCopies: currentAvailabeCopies+1,
+                availableCopies: currentAvailabeCopies,
             }
         },
         {
             new: true,
         }
     )
+
+    await ReservedBook.findByIdAndDelete(loanRecord?._id)
+        .then(()=>console.log("reserve book record cleared"))
+        .catch((error)=>console.log(error.message))
+
 
     return res  
             .status(200)

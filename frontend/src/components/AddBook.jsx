@@ -4,6 +4,7 @@ import {  useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { compose } from '@reduxjs/toolkit';
 
 
 export default function AddBook() {
@@ -34,8 +35,7 @@ export default function AddBook() {
     console.log(formData)
     const handleFormSubmit = async(e)=>{
         e.preventDefault();       
-        setError(null);
-        setSuccess(null); 
+     
         console.log(Object.keys(formData))
         if(
             Object.values(formData).some(value => value === '')
@@ -45,6 +45,7 @@ export default function AddBook() {
         }
 
      
+        setError(null);
         setLoading(true);
         try {
           const response = await fetch("/api/v1/book/add-book", {
@@ -56,22 +57,24 @@ export default function AddBook() {
           });
     
           const data = await response?.json();
-          // console.log(data.message)
-          // // // console.log(data)
+  
           if (!response.ok) {
+            setLoading(false);
             setError(data.message);
             return;
           }
           if(data.success){
             setSuccess(data.message);
             alert(data.message)
-            window.location.reload();
             setError(null);
+            setLoading(false);
+            return;
           }
     
         } 
         catch (error) {
-            setError(error.message);
+            setLoading(false);
+            setError(error.message)
         } 
         finally {
           setLoading(false);
@@ -95,7 +98,7 @@ export default function AddBook() {
         }
         {
           success && (
-            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2'>
+            <Alert color='success' className='mt-5 bg-green-500 h-12 justify-center text-white mb-2 p-2'>
               {success}
             </Alert>
           )
@@ -114,7 +117,7 @@ export default function AddBook() {
           
             
           <img
-            src={currentUser.profilePhoto}
+            src='https://choosethebook.com/img/book.png'
             alt='user'
             className={`rounded-full w-full h-full object-cover border-8`}
           />

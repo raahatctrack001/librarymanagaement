@@ -13,6 +13,7 @@ import UpdatePassword from "./pages/UpdatePassword"
 import ReserveSuccess from "./components/ReserveSuccess"
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute"
 import PrivateRoute from "./components/PrivateRoute"
+import UpdateBook from "./components/UpdateBook"
 
 
 function App() {
@@ -28,16 +29,14 @@ function App() {
           <Route path="/project" element = {<Projects />} />
           
           <Route element={<PrivateRoute />}>
-            <Route path='/dashboard' element={<Dashboard />} />
-            {/* <Route path="/dashboard" element = {<DashBoard />} /> */}
+            <Route path="/dashboard" element = {<DashBoard />} />
             <Route path="/profile" element = {<ProfilePage />} />
             <Route path="/l-card" element = {<LibraryCard />} />
             <Route path="/update-password" element = {<UpdatePassword />} />
           </Route>
 
           <Route element={<OnlyAdminPrivateRoute />}>
-            <Route path='/create-post' element={<CreatePost />} />
-            <Route path='/update-post/:postId' element={<UpdatePost />} />
+            <Route path="/dashboard?tab=update-book" element = {<UpdateBook />} />
           </Route>
   
 

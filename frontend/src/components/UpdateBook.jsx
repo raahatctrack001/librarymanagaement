@@ -4,6 +4,7 @@ import {  useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { updateStart } from '../redux/user/userSlice';
 
 
 export default function UpdateBook() {
@@ -11,6 +12,7 @@ export default function UpdateBook() {
   const dispatch = useDispatch();
   const filePickerRef = useRef();
   const { currentUser } = useSelector(state=>state.user)
+
 
   const [formData, setFormData] = useState(
         {
@@ -36,6 +38,7 @@ export default function UpdateBook() {
         e.preventDefault();       
         setError(null);
         setSuccess(null); 
+        dispatch(updateStart())
         console.log(Object.keys(formData))
         if(
             Object.values(formData).some(value => value === '')
@@ -59,13 +62,15 @@ export default function UpdateBook() {
           // console.log(data.message)
           // // // console.log(data)
           if (!response.ok) {
+            setLoading(false)
             setError(data.message);
             return;
           }
           if(data.success){
             setSuccess(data.message);
+            setLoading(false);
             alert(data.message)
-            window.location.reload();
+            // window.location.reload();
             setError(null);
           }
     

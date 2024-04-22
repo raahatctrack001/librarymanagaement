@@ -9,25 +9,26 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 
 export const addBook = asyncHandler(async (req, res, next)=>{
-    await  User.deleteMany({})
-    let n = 0
-    userData.map(async (user)=>{
-        await User.create({
-            fullName:user.     fullName, 
-            username:user.     username, 
-            email:user.        email, 
-            phone:user.        phone, 
-            rollNumber:user.   rollNumber, 
-            yearOfJoining:user.yearOfJoining, 
-            branch:user.       branch, 
-            password:user.     password,
-        })
-        .then(()=>n+=1)
-        .catch(error=>console.log(error.message))
-        console.log('added: ', n)
-    })
+    // await  User.deleteMany({})
+    // let n = 0
+    // userData.map(async (user)=>{
+    //     await User.create({
+    //         fullName:user.     fullName, 
+    //         username:user.     username, 
+    //         email:user.        email, 
+    //         phone:user.        phone, 
+    //         rollNumber:user.   rollNumber, 
+    //         yearOfJoining:user.yearOfJoining, 
+    //         branch:user.       branch, 
+    //         password:user.     password,
+    //     })
+    //     .then(()=>n+=1)
+    //     .catch(error=>console.log(error.message))
+    //     console.log('added: ', n)
+    // })
 
-    console.log(n)
+    // console.log(n)
+    console.log(req.user)
     if(!req.user?.isAdmin){
         throw new apiError(403, "You are not allowed to add book in book store!")
     }
@@ -55,9 +56,6 @@ export const addBook = asyncHandler(async (req, res, next)=>{
     //     .then(()=>console.log('deleted all users'))
     //     .catch((error)=>console.log(error))
 
-
-
-    return
     const { title, isbn, topic, author, branchSpecific, availableCopies, totalCopies } = req.body
     if(
         [

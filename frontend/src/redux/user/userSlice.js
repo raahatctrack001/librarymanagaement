@@ -43,6 +43,7 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+  
     deleteUserStart: (state) => {
       state.loading = true;
       state.error = null;

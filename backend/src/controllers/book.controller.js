@@ -1,4 +1,5 @@
-import { isErrored } from "stream";
+
+import { bookData } from "../../bookData.js";
 import Book from "../models/book.model.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
@@ -10,6 +11,26 @@ export const addBook = asyncHandler(async (req, res, next)=>{
         throw new apiError(403, "You are not allowed to add book in book store!")
     }
 
+    // let n = 0; bulk book add
+    // bookData.map(async (book)=>{
+    //     await Book.create({
+    //         title: book.title, 
+    //         isbn: book.isbn, 
+    //         topic: book.topic, 
+    //         author: book.author, 
+    //         branchSpecific: book.branchSpecific, 
+    //         availableCopies: book.availableCopies, 
+    //         totalCopies: book.totalCopies
+    //     })
+    //     .then(()=>n+=1)
+    //     .catch(error=>console.log(error))
+
+    //     console.log(n)
+    // })
+
+
+
+    return
     const { title, isbn, topic, author, branchSpecific, availableCopies, totalCopies } = req.body
     if(
         [

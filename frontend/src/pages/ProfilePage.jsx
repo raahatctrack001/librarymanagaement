@@ -38,7 +38,29 @@ export default function Profile() {
   };
   const handleDeleteUser = async () => {    
   };
-  const handleSignout = async () => {     
+  const handleSignout = async () => {
+    try {
+      const response = await fetch("/api/v1/auth/logout", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      const data = await response?.json();
+      if (!response.ok) {
+        console.log('failed')
+        return;
+      }
+      if(data.success){
+        dispatch(signOutSuccess());
+        navigate('/sign-in');
+
+      }
+    } 
+    catch (error) {
+        console.log(error)
+    }     
   };
   const handleInputChange = ()=>{
   };

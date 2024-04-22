@@ -179,7 +179,15 @@ export default function DashSidebar() {
                  Over Due books
                 </Sidebar.Item>
               </Link>
-              
+              <Link to='/search-user'>
+                <Sidebar.Item
+                  active={tab === 'search-user'}
+                  icon={FaPeopleLine}
+                  as='div'
+                >
+                 Search User
+                </Sidebar.Item>
+              </Link>               
             </>
           )}
           <Link to='/dashboard?tab=all-books'>
@@ -211,6 +219,7 @@ export default function DashSidebar() {
               Current Loans
             </Sidebar.Item>
           </Link>
+
              
           <Sidebar.Item
             icon={HiArrowSmRight}

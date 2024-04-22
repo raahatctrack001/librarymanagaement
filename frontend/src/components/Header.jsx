@@ -46,9 +46,13 @@ const Header = () => {
   const handleUpdatePassword = ()=>{
 
   }
-  const handleSearch = (e)=>{
+  const handleBookSearch = (e)=>{
     navigate(`/search-book/${e.target.value}`);
   }
+  const handleUserSearch = (e)=>{
+    navigate(`/search-user/${e.target.value}`);
+  }
+  
   return (
     <header className="flex flex-col md:flex-row items-center justify-between px-4 py-5 bg-gray-800 text-white">
       <div className="flex my-auto items-center">
@@ -57,17 +61,19 @@ const Header = () => {
           <input
             placeholder='search about books' 
             className='px-3 py-1 bg-gray-300 text-gray-800 rounded-2xl' 
-            onChange={handleSearch}
+            onChange={handleBookSearch}
             />
         </div>
       </div>
       <div className="flex items-center gap-4 mt-4 md:mt-0 md:ml-4">
-        <button 
-        className="h-12 w-14 px-5 bg-blue-500 text-white rounded-lg focus:outline-none hover:bg-blue-600"
-        onClick={()=>dispatch(toggleTheme())}
-        >
-        <FaMoon /> 
-        </button>
+        {currentUser?.isAdmin && <div className="md:ml-4 mt-4 md:mt-0">
+          <input
+            placeholder='search about users' 
+            className='px-3 py-1 bg-gray-300 text-gray-800 rounded-2xl' 
+            onChange={handleUserSearch}
+          />
+        </div>
+        }
         {
           currentUser ? 
           (<Dropdown className='p-2 z-10 bg-black text-teal-800 rounded-3xl' label={currentUser?.username} arrowIcon={false}>

@@ -15,6 +15,7 @@ import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute"
 import PrivateRoute from "./components/PrivateRoute"
 import UpdateBook from "./components/UpdateBook"
 import SearchBooks from "./components/SearchBooks"
+import SearchUser from "./components/SearchUser"
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           </Route>
 
           <Route element={<OnlyAdminPrivateRoute />}>
+            <Route path="/search-user/:searchTerm" element = {<SearchUser />} />
             <Route path="/dashboard?tab=update-book" element = {<UpdateBook />} />
             <Route path="/update-book/:bookId" element = {<UpdateBook />} />
           </Route>

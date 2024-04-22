@@ -23,6 +23,8 @@ import OverDueUsers from '../components/OverDueUsers';
 import AllBooks from '../components/AllBooks';
 import DashOutput from '../components/DashOutput';
 import OverDueBooks from '../components/OverDueBooks';
+import SearchUser from '../components/SearchUser';
+import { useSelector } from 'react-redux';
 
 
 
@@ -41,6 +43,7 @@ import OverDueBooks from '../components/OverDueBooks';
 export default function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState('');
+  const { currentUser } = useSelector(state => state.user);
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get('tab');
@@ -70,6 +73,7 @@ export default function Dashboard() {
           {tab === 'available-books' && <AvailableBooks />}
           {tab === 'book-bank' && <BookBank />}
           {tab === 'over-due-books' && <OverDueBooks />}
+          {tab === 'search-user' && <SearchUser />}
       </div> 
     </div>
   );

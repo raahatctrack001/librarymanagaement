@@ -81,7 +81,7 @@ export const registerUser = asyncHandler(async (req, res, next)=>{
     }
 
     if(phone.length != 10){
-        throw new apiError(406, "Invalid Phone! enter valid mobile number without country code!" )
+        throw new apiError(406, "Invalid Phone! enter valid indian mobile number without country code!" )
     }
 
     if(rollNumber.length != 8){

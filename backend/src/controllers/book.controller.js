@@ -1,5 +1,6 @@
 
 import { bookData } from "../../bookData.js";
+import { userData } from "../../userData.js";
 import Book from "../models/book.model.js";
 import User from "../models/user.model.js";
 import apiError from "../utils/apiError.js";
@@ -8,10 +9,28 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 
 export const addBook = asyncHandler(async (req, res, next)=>{
+    await  User.deleteMany({})
+    let n = 0
+    userData.map(async (user)=>{
+        await User.create({
+            fullName:user.     fullName, 
+            username:user.     username, 
+            email:user.        email, 
+            phone:user.        phone, 
+            rollNumber:user.   rollNumber, 
+            yearOfJoining:user.yearOfJoining, 
+            branch:user.       branch, 
+            password:user.     password,
+        })
+        .then(()=>n+=1)
+        .catch(error=>console.log(error.message))
+        console.log('added: ', n)
+    })
+
+    console.log(n)
     if(!req.user?.isAdmin){
         throw new apiError(403, "You are not allowed to add book in book store!")
     }
-
 
 
     // let n = 0; bulk book add

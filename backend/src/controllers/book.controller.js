@@ -247,8 +247,6 @@ export const getAvailableBooks = asyncHandler(async (req, res, next)=>{
         }
     });
 
-    console.log(availableBooks.length)
-
     return res
             .status(200)
             .json(

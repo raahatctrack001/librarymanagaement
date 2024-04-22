@@ -122,7 +122,7 @@ const AllBooks = () => {
     console.log('Deleting book:', selectedBook);
     const erpu = prompt("Enter you UID.")
     try {
-      const response = await fetch(`/api/v1/book//delete-book//${selectedBook?._id}/${erpu}`,{
+      const response = await fetch(`/api/v1/book/delete-book/${selectedBook?._id}/${erpu}`,{
           method: 'DELETE',
         });
 

@@ -11,6 +11,8 @@ import ProfilePage from "./pages/ProfilePage"
 import LibraryCard from "./pages/LibraryCard"
 import UpdatePassword from "./pages/UpdatePassword"
 import ReserveSuccess from "./components/ReserveSuccess"
+import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute"
+import PrivateRoute from "./components/PrivateRoute"
 
 
 function App() {
@@ -24,10 +26,19 @@ function App() {
           <Route path="/register" element = {<Register />} />
           <Route path="/about" element = {<About />} />
           <Route path="/project" element = {<Projects />} />
-          <Route path="/dashboard" element = {<DashBoard />} />
-          <Route path="/profile" element = {<ProfilePage />} />
-          <Route path="/l-card" element = {<LibraryCard />} />
-          <Route path="/update-password" element = {<UpdatePassword />} />
+          
+          <Route element={<PrivateRoute />}>
+            <Route path='/dashboard' element={<Dashboard />} />
+            {/* <Route path="/dashboard" element = {<DashBoard />} /> */}
+            <Route path="/profile" element = {<ProfilePage />} />
+            <Route path="/l-card" element = {<LibraryCard />} />
+            <Route path="/update-password" element = {<UpdatePassword />} />
+          </Route>
+
+          <Route element={<OnlyAdminPrivateRoute />}>
+            <Route path='/create-post' element={<CreatePost />} />
+            <Route path='/update-post/:postId' element={<UpdatePost />} />
+          </Route>
   
 
         </Routes>

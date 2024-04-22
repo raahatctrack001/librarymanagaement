@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaDocker, FaEllipsisH, FaEllipsisV, FaHelicopter, FaHighlighter, FaOptinMonster } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Navigate, useNavigate, useResolvedPath } from 'react-router-dom';
 import ReserveSuccess from './ReserveSuccess';
@@ -146,7 +146,11 @@ const AllBooks = () => {
             <div className="absolute top-2 right-2">
               <div className="relative">
                 <button className="text-gray-600 focus:outline-none" onClick={() => handleOptionSelect(book)}>
-                  <FaEllipsisV size={24} />
+                <div className='flex flex-col gap-0'>
+                  <span className='font-bold  text-black'> . </span>
+                  <span className='font-bold  text-black'> . </span>
+                  <span className='font-bold  text-black'> . </span>
+                </div>
                 </button>
                 {/* Dropdown content */}
                 {selectedBook && selectedBook.isbn === book.isbn && isDropdownOpen && (

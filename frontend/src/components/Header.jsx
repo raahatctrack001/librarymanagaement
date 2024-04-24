@@ -74,23 +74,23 @@ const Header = () => {
             isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}
             className='p-2 z-10 bg-black text-teal-800 rounded-3xl' label={currentUser?.username} arrowIcon={false}>
             <Link to={'/dashboard?tab=dash'}>
-              <Dropdown.Item>
+              <Dropdown.Item className='  rounded-lg hover:bg-red-800'>
                 {/* <span className="block font-semibold">{currentUser?.fullName}</span> */}
                 {/* <span className="block text-black font-semibold"> My Dashboard </span> */}
-                <span className="block truncate text-sm font-medium">My DashBoard</span>
+                <span className="block rounded-lg truncate text-sm font-medium">My DashBoard</span>
               </Dropdown.Item>
             </Link>
             <Dropdown.Divider className='border-b-2 border-white' />
-            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={HiMail}>{currentUser?.email}</Dropdown.Item>
-            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
-            <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
+            <Dropdown.Item  className='pl-1 rounded-lg hover:bg-red-800' icon={HiMail}>{currentUser?.email}</Dropdown.Item>
+            <Dropdown.Item  className='pl-1 rounded-lg hover:bg-red-800' icon={FaCodeBranch}> {currentUser?.branch} </Dropdown.Item>
+            <Dropdown.Item  className='pl-1 rounded-lg hover:bg-red-800' icon={FaPhone}>{currentUser?.phone}</Dropdown.Item>
             <Link to={'/l-card'} >
-              <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={FaIdCard}>Library Card</Dropdown.Item>
+              <Dropdown.Item  className='pl-1 rounded-lg hover:bg-red-800' icon={FaIdCard}>Library Card</Dropdown.Item>
             </Link>
             <Dropdown.Divider className='border-b-2 border-white hover:bg-red-800' />
           
             <Link to={'/profile'}>
-              <Dropdown.Item className='pl-1 hover:bg-red-800' icon={FaInfo}>Update Profile</Dropdown.Item>            
+              <Dropdown.Item className='pl-1 rounded-lg hover:bg-red-800' icon={FaInfo}>Update Profile</Dropdown.Item>            
             </Link>
             <Dropdown.Item onClick={handleSignOut} className='pl-1 hover:bg-red-800' icon={HiLogout}>Sign out</Dropdown.Item>            
           </Dropdown>) : 

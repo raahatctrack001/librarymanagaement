@@ -1,15 +1,52 @@
 
-import { bookData } from "../../bookData.js";
-import { userData } from "../../userData.js";
 import Book from "../models/book.model.js";
 import User from "../models/user.model.js";
+import { uploadOnCloudinary } from "../services/cloudinary.services.js";
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { findQuery } from "./reservedBook.controller.js";
 
+export const updateBookImage = asyncHandler( async (req, res, next)=>{
+    const bookImageLocalFilePath = req.file.path;
+    if(!bookImageLocalFilePath){
+        throw new apiError(400, 'plz select image to upload');
+    }
 
+    try{
+        const response = await uploadOnCloudinary(bookImageLocalFilePath);
+        if(!response){
+            throw new apiError(500, "failed to update book image");
+        }
+
+        await Book.findByIdAndUpdate(
+            req.params?.bookId,
+            {
+                $set: {
+                    photoURL: response.url,
+                }
+            }, {
+                new: true,
+            }
+        )
+
+        .then(()=>console.log("book image updated"))
+        .catch((error)=>next(error))
+
+        return res
+            .status(200)
+            .json(
+                new apiResponse(200, "book image updated")
+            )
+        
+    }
+    catch(error){
+        next();
+    }
+})
 export const addBook = asyncHandler(async (req, res, next)=>{
+    console.log("its working")
+    return
     // await  User.deleteMany({})
     // let n = 0
     // userData.map(async (user)=>{

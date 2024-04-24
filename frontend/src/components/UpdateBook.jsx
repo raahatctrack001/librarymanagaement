@@ -2,7 +2,6 @@ import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
 import {  useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserStart } from '../redux/user/userSlice';
 import { updateBookFailure, updateBookStart, updateBookSuccess } from '../redux/book/bookSlice';
 
 
@@ -45,7 +44,7 @@ export default function UpdateBook() {
     const handleInputChange = (e)=>{
         setFormData({...formData, [e.target.id]: e.target.value})
     }
-    console.log(formData)
+    // console.log(formData)
     const handleFormSubmit = async(e)=>{
         e.preventDefault();       
         
@@ -73,6 +72,7 @@ export default function UpdateBook() {
           if(data.success){
             setPrevData(data.data)
             dispatch(updateBookSuccess(data.message));
+            setSuccess(data.message)
             alert(data.message)
             
           }
@@ -84,15 +84,49 @@ export default function UpdateBook() {
         } 
         
     }
-  const handleImageChange = ()=>{
 
-  }
+    const updateBookImage = async (file)=>{
+      dispatch(updateBookStart());
+      try {
+        dispatch(updateBookStart())
+        const res = await fetch(`/api/v1/book/update-book-image/${bookId}`, {
+          method:"PATCH",
+          body: file,
+        });
+        
+        const updatedBook = await res.json();
+        console.log(UpdateBook)
+        if(updatedBook.success){ //not res.successs if res the its res.ok()
+          dispatch(updateBookSuccess());
+          alert(updatedBook.message)
+          setSuccess(updatedBook.message)
+        }
+      } catch (error) {
+        alert(error.message);
+        dispatch(updateBookFailure(error.message))
+        // console.log(error);
+      }
+    }
+    const handleImageChange = (e)=>{
+      e.preventDefault();
+      const newFormData = new FormData();
+      newFormData.append('bookImage', e.target.files[0]);
+      updateBookImage(newFormData)
+    }
+  
   return (
     <div className='max-w-3xl m-5 rounded-3xl mx-auto p-5 w-full bg-gray-200 text-black'>
     <div className='flex flex-col items-center'>
       <h1 className='mt-7 mb-2 text-center font-semibold text-3xl'>Update Book</h1>
       <p className='mb-9'> Enter the details below </p>
     </div>
+    {
+          loading && (
+            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2 justify-center'>
+              Updating Book Credentials, plz wait...
+            </Alert>
+          )
+        }
        {
           error && (
             <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2'>
@@ -102,7 +136,7 @@ export default function UpdateBook() {
         }
         {
           success && (
-            <Alert color='failure' className='mt-5 bg-green-500 mt-5 text-white mb-2 p-2'>
+            <Alert color='failure' className='mt-5 bg-green-500  text-white mb-2 p-2'>
               {success}
             </Alert>
           )

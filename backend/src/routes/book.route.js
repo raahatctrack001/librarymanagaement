@@ -7,11 +7,13 @@ import {
     getAvailableBooks, 
     getBook,
     searchBook,
-    updateBook
+    updateBook,
+    updateBookImage
 } from '../controllers/book.controller.js';
 import upload from '../middlewares/multer.midleware.js';
 const router = express.Router();
 
+router.route('/update-book-image/:bookId').patch(upload.single('bookImage'), verifyUser, updateBookImage);
 router.route('/add-book').post(upload.none(), verifyUser, addBook);
 router.route('/get-all-books').get(getAllBooks);
 router.route('/get-book/:bookId').get(getBook);

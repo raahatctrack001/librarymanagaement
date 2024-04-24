@@ -3,6 +3,7 @@ import {  useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserStart } from '../redux/user/userSlice';
+import { updateBookFailure, updateBookStart, updateBookSuccess } from '../redux/book/bookSlice';
 
 
 export default function UpdateBook() {
@@ -10,7 +11,6 @@ export default function UpdateBook() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const filePickerRef = useRef();
-  const { currentUser } = useSelector(state=>state.user)
   const { loading, error} = useSelector(state => state.book)
   const [formData, setFormData] = useState({});
     
@@ -48,18 +48,13 @@ export default function UpdateBook() {
     console.log(formData)
     const handleFormSubmit = async(e)=>{
         e.preventDefault();       
-        setError(null);
-        setSuccess(null); 
-        // console.log(Object.keys(formData))
-        // if(
-        //     Object.values(formData).some(value => value === '')
-        // ){
-        //     alert("All field's are necessary!");
-        //     return;
-        // }
-
-     
-        setLoading(true);
+        
+        if(Object.keys(formData).length === 0){
+          alert('plz make some changes then click update')
+          updateBookFailure('no changes made yet')
+          return;
+        }
+        dispatch(updateBookStart())
         try {
           const response = await fetch(`/api/v1/book/update-book/${bookId}`, {
             method: 'PATCH',
@@ -71,27 +66,23 @@ export default function UpdateBook() {
     
           const data = await response?.json();
           if (!response.ok) {
-            setLoading(false)
-            setError(data.message);
+            dispatch(updateBookFailure(data.message))
+            alert(data.message)
             return;
           }
           if(data.success){
             setPrevData(data.data)
-            setSuccess(data.message);
-            setLoading(false);
+            dispatch(updateBookSuccess(data.message));
             alert(data.message)
-            // window.location.reload();
-            setError(null);
+            
           }
     
         } 
         catch (error) {
-            setLoading(false)
-            setError(error.message);
+          dispatch(updateBookFailure(error.message))
+          alert(error.message);
         } 
-        finally {
-          setLoading(false);
-        }
+        
     }
   const handleImageChange = ()=>{
 

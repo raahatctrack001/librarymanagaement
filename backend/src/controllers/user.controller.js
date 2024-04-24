@@ -106,7 +106,16 @@ export const getAllUsers = asyncHandler(async (req, res, next)=>{
 })
 
 export const getSpecificUser = asyncHandler(async (req, res, next)=>{
+    const desiredUser = await User.findById(req.user?._id);
+    if(!desiredUser){
+        throw new apiError(404, "user not found");
+    }
 
+    return res      
+            .status(200)
+            .json(
+                new apiResponse(200, "user found!", desiredUser)
+            )
 })
 
 export const deleteUser = asyncHandler(async (req, res, next)=>{

@@ -11,10 +11,11 @@ const AllUsers = () => {
   const fetchData = async () => {
     try {
       const response = await fetch('/api/v1/user/get-all-users'); // Replace '/api/users' with your actual backend endpoint
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
       const data = await response.json();
+      
+      if (!response.ok) {
+        alert(data.message)
+      }
       setUsers(data.data);
       setError(null);
     } catch (error) {

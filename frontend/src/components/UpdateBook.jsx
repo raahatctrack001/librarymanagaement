@@ -11,10 +11,9 @@ export default function UpdateBook() {
   const dispatch = useDispatch();
   const filePickerRef = useRef();
   const { currentUser } = useSelector(state=>state.user)
-
+  const { loading, error} = useSelector(state => state.book)
   const [formData, setFormData] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    
     const [success, setSuccess] = useState(null);
     const [prevData, setPrevData] = useState({});
 

@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { compose } from '@reduxjs/toolkit';
+import { addBookFailure, addBookStart, addBookSuccess, updateBookFailure, updateBookStart } from '../redux/book/bookSlice';
 
 
 export default function AddBook() {
   const { currentUser } = useSelector(state => state.user)
+  const { loading, error } = useSelector(state => state.book)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const filePickerRef = useRef()
@@ -24,18 +26,17 @@ export default function AddBook() {
             totalCopies: '',
         }
     );
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     
     
     const handleInputChange = (e)=>{
         setFormData({...formData, [e.target.id]: e.target.value})
     }
-    console.log(formData)
+
     const handleFormSubmit = async(e)=>{
         e.preventDefault();       
-     
+
+        dispatch(addBookStart())
         console.log(Object.keys(formData))
         if(
             Object.values(formData).some(value => value === '')
@@ -43,10 +44,6 @@ export default function AddBook() {
             alert("All field's are necessary!");
             return;
         }
-
-     
-        setError(null);
-        setLoading(true);
         try {
           const response = await fetch("/api/v1/book/add-book", {
             method: 'POST',
@@ -59,26 +56,22 @@ export default function AddBook() {
           const data = await response?.json();
   
           if (!response.ok) {
-            setLoading(false);
-            setError(data.message);
+            alert(data.message)
+            dispatch(addBookFailure(data.message))
             return;
           }
           if(data.success){
-            setSuccess(data.message);
             alert(data.message)
-            setError(null);
-            setLoading(false);
+            dispatch(addBookSuccess())
             return;
           }
     
         } 
         catch (error) {
-            setLoading(false);
-            setError(error.message)
+          alert(error.message)
+          dispatch(addBookFailure(error.message))
         } 
-        finally {
-          setLoading(false);
-        }
+        
     }
     const handleImageChange = ()=>{
 

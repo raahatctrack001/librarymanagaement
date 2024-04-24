@@ -120,7 +120,7 @@ export default function UpdateBook() {
       <h1 className='mt-7 mb-2 text-center font-semibold text-3xl'>Update Book</h1>
       <p className='mb-9'> Enter the details below </p>
     </div>
-    {
+      {
           loading && (
             <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2 justify-center'>
               Updating Book Credentials, plz wait...

@@ -41,9 +41,10 @@ export const updateBookImage = asyncHandler( async (req, res, next)=>{
         
     }
     catch(error){
-        next();
+        next(error);
     }
 })
+
 export const addBook = asyncHandler(async (req, res, next)=>{
     console.log("its working")
     return

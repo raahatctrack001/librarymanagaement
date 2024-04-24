@@ -1,4 +1,4 @@
-import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
+import { Alert, Button, Modal } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -11,34 +11,50 @@ import {
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { Link } from 'react-router-dom';
+
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { currentUser } = useSelector(state => state.user);
-  const {error, setError } = useState('')
-  const {loading, setLoading } = useState(null)
-  const [disable, setDisable] = useState(false)
-  const [imageFileUploadError, setImageFileUploadError] = useState(null);
-  const [imageFileUploading, setImageFileUploading] = useState(false);
-  const [updateUserError, setUpdateUserError] = useState(null);
+  const { currentUser, loading, error } = useSelector(state => state.user);
+  const [ success, setSuccess ] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  const handleSubmit = ()=>{
-
-  }
+  
+  
   const handleImageChange = (e) => {
+    const newFormData = new FormData();
+    newFormData.append('profile-image', e.target.files[0]);
+    updateProfileImage(newFormData);
   };
 
-  const handleChange = (e) => { 
-    
-  };
+  const updateProfileImage = async (file)=>{
+    dispatch(updateUserStart());
+    try {
+      const res = await fetch(`/api/v1/user/update-profile-picture/${currentUser?._id}`, {
+        method:"PATCH",
+        body: file,
+      });
+      
+      const updatedUser = await res.json();
+      console.log(updatedUser)
+      if(updatedUser.success){ //not res.successs if res the its res.ok()
+        dispatch(updateUserSuccess(updateUserStart))
+        alert(updatedUser.message)
+        setSuccess(updatedUser.message)
+      }
+    } catch (error) {
+      alert(error.message);
+      dispatch(updateUserFailure(error.message))
+      // console.log(error);
+    }
+  }
 
-  console.log(formData)
+
   const handleDeleteUser = async () => {    
   };
+
   const handleSignout = async () => {
     try {
       const response = await fetch("/api/v1/auth/logout", {
@@ -63,9 +79,11 @@ export default function Profile() {
         console.log(error)
     }     
   };
+
   const handleInputChange = (e)=>{
     setFormData({...formData, [e.target.id] : e.target.value});  
   };
+
   const handleFormSubmit = async(e)=>{
     e.preventDefault();       
     dispatch(updateUserStart())
@@ -99,9 +117,34 @@ export default function Profile() {
     } 
 }
 
+useEffect(()=>{
+  
+}, [])
+
   return (
     <div className='max-w-3xl m-5 rounded-3xl mx-auto p-5 w-full bg-gray-200 text-black'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Update Profile</h1>
+      {
+          loading && (
+            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2 justify-center'>
+              Updating Your Credentials, plz wait...
+            </Alert>
+          )
+        }
+       {
+          error && (
+            <Alert color='failure' className='mt-5 bg-red-500 text-white mb-2 p-2'>
+              {error}
+            </Alert>
+          )
+        }
+        {
+          success && (
+            <Alert color='failure' className='mt-5 bg-green-500  text-white mb-2 p-2'>
+              {success}
+            </Alert>
+          )
+        }
       <form onSubmit={handleFormSubmit} className='flex flex-col gap-4'>
         <input
           type='file'
@@ -212,21 +255,6 @@ export default function Profile() {
           Sign Out
         </span>
       </div>
-      {updateUserSuccess && (
-        <Alert color='success' className='mt-5'>
-          {updateUserSuccess}
-        </Alert>
-      )}
-      {updateUserError && (
-        <Alert color='failure' className='mt-5'>
-          {updateUserError}
-        </Alert>
-      )}
-      {error && (
-        <Alert color='failure' className='mt-5'>
-          {error}
-        </Alert>
-      )}
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}

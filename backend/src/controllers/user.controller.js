@@ -1,10 +1,47 @@
 import User from "../models/user.model.js"
+import { uploadOnCloudinary } from "../services/cloudinary.services.js"
 import apiError from "../utils/apiError.js"
 import apiResponse from "../utils/apiResponse.js"
 import asyncHandler from "../utils/asyncHandler.js"
 
-export const updateProfilePicture = asyncHandler(async (req, res, next)=>{
+export const updateProfilePicture = asyncHandler( async (req, res, next)=>{
+    const userImageLocalFilePath = req.file.path;
+    if(!userImageLocalFilePath){
+        throw new apiError(400, 'plz select image to upload');
+    }
 
+    try{       
+        const response = await uploadOnCloudinary(userImageLocalFilePath);
+        if(!response){
+            throw new apiError(500, "failed to update book image");
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params?.userId,
+            {
+                $set: {
+                    profilePhoto: response.url,
+                }
+            }, 
+            {
+                new: true,
+            }
+        )
+
+        if(!updatedUser){
+            throw new apiError(500, "Failed to update profile image")
+        }
+        
+        console.log(updatedUser)
+        return res
+            .status(200)
+            .json(
+                new apiResponse(200, "profile image updated", updatedUser)
+            )
+        
+    }
+    catch(error){
+        next(error);
+    }
 })
 
 export const updateAccountDetails = asyncHandler(async (req, res, next)=>{

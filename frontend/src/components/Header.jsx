@@ -16,6 +16,7 @@ const Header = () => {
   const { currentUser } = useSelector(state=>state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false)
  
 
   const handleSignOut = async()=>{   
@@ -43,40 +44,41 @@ const Header = () => {
     }
   }
 
-  const handleUpdatePassword = ()=>{
+  // const handleUpdatePassword = ()=>{
 
-  }
+  // }
   const handleBookSearch = (e)=>{
     navigate(`/search-book/${e.target.value}`);
   }
-  const handleUserSearch = (e)=>{
-    navigate(`/search-user/${e.target.value}`);
-  }
+  // const handleUserSearch = (e)=>{
+  //   navigate(`/search-user/${e.target.value}`);
+  // }
   
   return (
     <header className="flex flex-col md:flex-row items-center justify-between px-4 py-5 bg-gray-800 text-white">
       <div className="flex my-auto items-center">
         <div className="text-lg font-bold">Library Management System</div>
-        
+        {currentUser && <div className="md:ml-4 mt-4 md:mt-0">
+          <input
+            placeholder='search about books' 
+            className='px-3 py-1 bg-gray-300 text-gray-800 rounded-2xl' 
+            onChange={handleBookSearch}
+            />
+        </div>}
       </div>
       <div className="flex items-center gap-4 mt-4 md:mt-0 md:ml-4">
-        {currentUser?.isAdmin && <div className="md:ml-4 mt-4 md:mt-0">
-          <input
-            placeholder='search about users' 
-            className='px-3 py-1 bg-gray-300 text-gray-800 rounded-2xl' 
-            onChange={handleUserSearch}
-          />
-        </div>
-        }
+        
         {
           currentUser ? 
-          (<Dropdown className='p-2 z-10 bg-black text-teal-800 rounded-3xl' label={currentUser?.username} arrowIcon={false}>
-            <Link to={'/dashboard'}>
-              <Dropdown.Header>
-                <span className="block font-semibold">{currentUser?.fullName}</span>
-                {/* <span className="block text-black font-semibold">{currentUser?.rollNumber}</span> */}
-                <span className="block truncate text-sm font-medium">{currentUser?.username}</span>
-              </Dropdown.Header>
+          (<Dropdown 
+            isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}
+            className='p-2 z-10 bg-black text-teal-800 rounded-3xl' label={currentUser?.username} arrowIcon={false}>
+            <Link to={'/dashboard?tab=dash'}>
+              <Dropdown.Item>
+                {/* <span className="block font-semibold">{currentUser?.fullName}</span> */}
+                {/* <span className="block text-black font-semibold"> My Dashboard </span> */}
+                <span className="block truncate text-sm font-medium">My DashBoard</span>
+              </Dropdown.Item>
             </Link>
             <Dropdown.Divider className='border-b-2 border-white' />
             <Dropdown.Item  className='pl-1 hover:bg-red-800' icon={HiMail}>{currentUser?.email}</Dropdown.Item>

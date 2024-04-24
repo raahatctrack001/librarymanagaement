@@ -15,6 +15,7 @@ export default function UpdateBook() {
     
     const [success, setSuccess] = useState(null);
     const [prevData, setPrevData] = useState({});
+    const [imgFile, setImgFile ] = useState(null) 
 
     useEffect(async()=>{        
        
@@ -37,7 +38,7 @@ export default function UpdateBook() {
             alert(error.message)
         } 
        
-    }, [])
+    }, [imgFile])
     
     
     
@@ -98,6 +99,7 @@ export default function UpdateBook() {
         console.log(UpdateBook)
         if(updatedBook.success){ //not res.successs if res the its res.ok()
           dispatch(updateBookSuccess());
+          setImgFile(updatedBook.url)
           alert(updatedBook.message)
           setSuccess(updatedBook.message)
         }

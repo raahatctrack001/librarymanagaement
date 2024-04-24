@@ -38,7 +38,7 @@ function App() {
           </Route>
 
           <Route element={<OnlyAdminPrivateRoute />}>
-            <Route path="/search-user/:searchTerm" element = {<SearchUser />} />
+            <Route path="/search-user" element = {<SearchUser />} />
             <Route path="/dashboard?tab=update-book" element = {<UpdateBook />} />
             <Route path="/update-book/:bookId" element = {<UpdateBook />} />
           </Route>

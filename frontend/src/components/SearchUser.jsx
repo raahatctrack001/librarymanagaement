@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FaUserGraduate } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
 const SearchUser = () => {
-  const { searchTerm } = useParams();
-  console.log(searchTerm)
-  const [userData, setUserData] = useState(null);
+  // const { searchTerm } = useParams();
+  // console.log(searchTerm)
+  const [ searchTerm, setSearchTerm ] = useState('');
+  const [ userData, setUserData ] = useState(null);
 
   
   useEffect(() => {
@@ -33,21 +33,16 @@ const SearchUser = () => {
   return (
     <div className="container mx-auto p-4">
       {!userData ? <h1 className="text-2xl font-bold mb-4"> No Match Found Yet! </h1> :<h1 className="text-2xl font-bold mb-4">Search User Result</h1> }
-      {/* <div className="mb-4 flex">
+      <div className="mb-4 flex">
         <input
           type="text"
-          placeholder="Enter username or email"
+          placeholder="Enter email or roll number or phone or username or branch"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
         />
-        <button
-          onClick={handleSearch}
-          className="ml-2 px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 focus:outline-none"
-        >
-          Search
-        </button>
-      </div> */}
+    
+      </div>
       {userData && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         

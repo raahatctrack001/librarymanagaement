@@ -158,6 +158,8 @@ const AllBooks = () => {
             <p className="text-gray-600 mb-2">Author: {book.author}</p>
             <p className="text-gray-600 mb-2">Topic: {book.topic}</p>
             <p className="text-gray-600 mb-2">Branch Specific: {book.branchSpecific}</p>
+            <p className="text-gray-600 mb-2">isbn: {book.isbn}</p>
+
             <p className="text-gray-600 mb-2">Available Copies: {book.availableCopies}</p>
             <p className="text-gray-600 mb-2">Total Copies: {book.totalCopies}</p>
             <p className="text-gray-600 mb-2">Book Holder's Count: {book.copyHolder.length}</p>

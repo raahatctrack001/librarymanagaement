@@ -12,7 +12,7 @@ const About = () => {
     {
       name: 'Pankaj',
       role: 'Lead Developer',
-      bio: 'Pankaj is a talented software engineer with expertise in full-stack development. She leads the development team with her innovative ideas and technical skills. Jane is committed to creating scalable and efficient solutions to complex problems.',
+      bio: 'Pankaj is a talented software engineer with expertise in full-stack development. He leads the development team with his innovative ideas and technical skills. Jane is committed to creating scalable and efficient solutions to complex problems.',
       contact: 'pk2942@dseu.ac.in',
       photoUrl: 'https://via.placeholder.com/150'
     },

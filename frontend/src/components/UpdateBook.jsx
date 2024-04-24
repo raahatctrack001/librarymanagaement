@@ -2,7 +2,7 @@ import { Alert, Button, Modal, ModalBody, TextInput } from 'flowbite-react';
 import {  useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateStart } from '../redux/user/userSlice';
+import { updateUserStart } from '../redux/user/userSlice';
 
 
 export default function UpdateBook() {
@@ -71,8 +71,6 @@ export default function UpdateBook() {
           });
     
           const data = await response?.json();
-          // console.log(data.message)
-          // // // console.log(data)
           if (!response.ok) {
             setLoading(false)
             setError(data.message);

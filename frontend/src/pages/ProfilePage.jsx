@@ -4,13 +4,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import {
-  updateStart,
-  updateSuccess,
-  updateFailure,
-  deleteUserStart,
-  deleteUserSuccess,
-  deleteUserFailure,
+  updateUserSuccess,
   signOutSuccess,
+  updateUserStart,
+  updateUserFailure,
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
@@ -18,11 +15,12 @@ import { Link } from 'react-router-dom';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { currentUser, loading, error } = useSelector(state => state.user);
+  const { currentUser } = useSelector(state => state.user);
+  const {error, setError } = useState('')
+  const {loading, setLoading } = useState(null)
   const [disable, setDisable] = useState(false)
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
-  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
@@ -34,8 +32,11 @@ export default function Profile() {
   const handleImageChange = (e) => {
   };
 
-  const handleChange = (e) => {   
+  const handleChange = (e) => { 
+    
   };
+
+  console.log(formData)
   const handleDeleteUser = async () => {    
   };
   const handleSignout = async () => {
@@ -62,13 +63,46 @@ export default function Profile() {
         console.log(error)
     }     
   };
-  const handleInputChange = ()=>{
+  const handleInputChange = (e)=>{
+    setFormData({...formData, [e.target.id] : e.target.value});  
   };
+  const handleFormSubmit = async(e)=>{
+    e.preventDefault();       
+    dispatch(updateUserStart())
+    try {
+      const response = await fetch(`/api/v1/user/update-account-details`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response?.json();
+  
+      if (!response.ok) {
+        dispatch(updateUserFailure(data.message))
+        alert(data.message)      
+        return;
+      }
+      if(data.success){ 
+        dispatch(updateUserSuccess(data.data)) 
+        alert(data.message)
+    
+      }
+
+    } 
+    catch (error) {
+      alert(error.message)
+        // setLoading(false)
+        // setError(error.message);
+    } 
+}
 
   return (
     <div className='max-w-3xl m-5 rounded-3xl mx-auto p-5 w-full bg-gray-200 text-black'>
-      <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+      <h1 className='my-7 text-center font-semibold text-3xl'>Update Profile</h1>
+      <form onSubmit={handleFormSubmit} className='flex flex-col gap-4'>
         <input
           type='file'
           accept='image/*'
@@ -109,6 +143,7 @@ export default function Profile() {
           <div>
             <label htmlFor="email" className="block pl-2 text-sm font-medium text-gray-700">Email</label>
             <input 
+                onChange = {handleInputChange}
                 defaultValue={currentUser.email}
                 type="email" 
                 id="email" 

@@ -8,7 +8,50 @@ export const updateProfilePicture = asyncHandler(async (req, res, next)=>{
 })
 
 export const updateAccountDetails = asyncHandler(async (req, res, next)=>{
+    // console.log(req.body)
+    if(!req.user){
+        throw new apiError(401, "you are not allowed to update changes!")
+    }
+    try {
+        const formData = req.body;
+        
+        const existingUser = await User.findById(req.user?._id);
+        let changes = {};
 
+        for(const key in formData){
+            if(formData[key] !== existingUser[key]){
+                changes[key] = formData[key];
+            }
+        }
+
+        if(Object.keys(changes).length == 0){
+            throw new apiError(204, "plz make some changes then request for update!")
+        }
+
+        // console.log(req.params)
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: changes // $set: changes not $set: { changes } $set: object not object inside object!
+            },
+            {
+                new: true,
+            }
+        )
+        if(!updatedUser){
+            throw new apiError(500, "failed to update user!")
+        }
+
+        return res  
+                .status(200)
+                .json(
+                    new apiResponse(200, "user updated", updatedUser)
+                )        
+    }
+    catch(error){
+        next(error);
+    }      
 })
 
 export const getAllUsers = asyncHandler(async (req, res, next)=>{

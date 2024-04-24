@@ -1,5 +1,6 @@
 import { Alert } from 'flowbite-react';
 import React, { useState } from 'react'
+import { FaEye } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
@@ -19,6 +20,8 @@ const Register = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+
     
     
     const handleInputChange = (e)=>{
@@ -141,19 +144,28 @@ const Register = () => {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <div className='flex' >
+
             <input 
                 onChange = {handleInputChange}
-                type="password" 
+                type= {showPassword ? "password" : "text"} 
                 id="password" 
                 className="mt-1 py-2 pl-6 rounded-full block w-full  border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+              <span 
+              className=' pl-2 pt-4'
+              onClick={()=>setShowPassword(showPassword?false:true)}
+              > <FaEye /> </span>
+            </div>
           </div>
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+         
             <input 
                 onChange = {handleInputChange}
                 type="password" 
                 id="confirmPassword" 
                 className="mt-1 py-2 pl-6 rounded-full block w-full border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+               
           </div>
           <div>
             <button 

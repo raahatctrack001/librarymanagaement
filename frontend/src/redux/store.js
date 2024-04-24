@@ -3,10 +3,11 @@ import userReducer from './user/userSlice.js';
 import themeReducer from './theme/themeSlice.js';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-
+import bookReducer from './book/bookSlice.js';
 const rootReducer = combineReducers({
   user: userReducer,
   theme: themeReducer,
+  book: bookReducer,
 });
 
 const persistConfig = {

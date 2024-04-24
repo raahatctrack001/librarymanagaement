@@ -81,7 +81,7 @@ const Header = () => {
               <Dropdown.Header>
                 <span className="block font-semibold">{currentUser?.fullName}</span>
                 {/* <span className="block text-black font-semibold">{currentUser?.rollNumber}</span> */}
-                <span className="block truncate text-sm font-medium">{currentUser?.email}</span>
+                <span className="block truncate text-sm font-medium">{currentUser?.username}</span>
               </Dropdown.Header>
             </Link>
             <Dropdown.Divider className='border-b-2 border-white' />
